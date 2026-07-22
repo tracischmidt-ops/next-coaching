@@ -1,0 +1,222 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..600&family=Inter:wght@400;500;600;700&display=swap');
+:root{--bg:#FAF6EF;--card:#FFFFFF;--ink:#2B2620;--ink-soft:#756A5B;--line:#E6DCC6;--health:#4F7A5B;--joy:#CC8A2E;--love:#B85368;--wealth:#2E6B72;--curiosity:#7A5C92;--health-bg:#EAF1EB;--joy-bg:#FBF0DF;--love-bg:#F8E9EC;--wealth-bg:#E7F0F0;--curiosity-bg:#F0EAF4;--radius:18px;}
+*{box-sizing:border-box;}
+#pulse-root{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--bg);min-height:100vh;line-height:1.5;}
+#pulse-root h1,#pulse-root h2,#pulse-root h3,#pulse-root h4{font-family:'Fraunces',Georgia,serif;font-weight:600;margin:0;letter-spacing:-.01em;}
+#pulse-root .wrap{max-width:680px;margin:0 auto;padding:32px 20px 80px;}
+#pulse-root button{font-family:'Inter',sans-serif;cursor:pointer;border:none;background:none;}
+#pulse-root .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 26px;border-radius:999px;font-weight:600;font-size:15px;transition:transform .15s,opacity .15s;}
+#pulse-root .btn-primary{background:var(--ink);color:var(--bg);}
+#pulse-root .btn-primary:disabled{opacity:.35;cursor:not-allowed;}
+#pulse-root .btn-primary:not(:disabled):hover{transform:translateY(-1px);}
+#pulse-root .btn-ghost{background:transparent;color:var(--ink-soft);text-decoration:underline;padding:8px 4px;font-size:14px;}
+#pulse-root .btn-ghost:hover{color:var(--ink);}
+#pulse-root .btn-secondary{background:transparent;border:1.5px solid var(--ink);color:var(--ink);}
+#pulse-root input[type=text],#pulse-root input[type=email]{width:100%;font-family:'Inter',sans-serif;font-size:16px;padding:13px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);}
+#pulse-root input:focus-visible{outline:2px solid var(--ink);outline-offset:1px;}
+#pulse-root label.field-label{display:block;font-size:13px;font-weight:600;color:var(--ink-soft);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em;}
+#pulse-root .eyebrow{font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:10px;}
+#pulse-root .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:28px 26px;}
+#pulse-root .intro-hero{text-align:center;padding-top:8px;}
+#pulse-root .intro-hero h1{font-size:32px;margin-bottom:14px;}
+#pulse-root .intro-hero p.lede{font-size:15px;color:var(--ink-soft);max-width:460px;margin:0 auto 28px;}
+#pulse-root .ring-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 20px;margin:24px 0 6px;}
+#pulse-root .ring-legend .item{display:flex;align-items:center;gap:7px;font-size:14px;}
+#pulse-root .ring-legend .dot{width:10px;height:10px;border-radius:50%;flex:none;}
+#pulse-root .ring-legend .rname{font-weight:600;}
+#pulse-root .footer-link-row{text-align:center;margin-top:36px;}
+#pulse-root .progress-row{display:flex;gap:6px;margin-bottom:26px;}
+#pulse-root .progress-seg{flex:1;height:6px;border-radius:999px;background:var(--line);overflow:hidden;}
+#pulse-root .progress-seg .fill{height:100%;border-radius:999px;transition:width .3s ease;}
+#pulse-root .scale-legend-bar{position:sticky;top:0;z-index:20;background:var(--card);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:center;padding:10px 16px;margin:0 -26px 2px;border-radius:var(--radius) var(--radius) 0 0;}
+#pulse-root .scale-legend-bar .leg-end{font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.03em;flex:0 0 70px;line-height:1.3;}
+#pulse-root .scale-legend-bar .leg-end.right{text-align:right;}
+#pulse-root .scale-legend-bar .leg-nums{display:flex;gap:8px;flex:1;justify-content:center;}
+#pulse-root .scale-legend-bar .leg-n{width:40px;height:28px;border-radius:8px;background:var(--bg);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--ink-soft);}
+#pulse-root .ring-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px;}
+#pulse-root .ring-header h2{font-size:26px;}
+#pulse-root .ring-count{font-size:13px;color:var(--ink-soft);font-weight:600;}
+#pulse-root .ring-subtitle{color:var(--ink-soft);font-size:14px;margin-bottom:18px;}
+#pulse-root .q-block{padding:16px 0;border-bottom:1px solid var(--line);}
+#pulse-root .q-block:last-child{border-bottom:none;}
+#pulse-root .q-text{font-size:15px;margin-bottom:12px;font-weight:500;}
+#pulse-root .scale-opts{display:flex;gap:8px;justify-content:center;}
+#pulse-root .scale-opt{position:relative;}
+#pulse-root .scale-opt input{position:absolute;opacity:0;width:40px;height:40px;cursor:pointer;margin:0;left:0;top:0;}
+#pulse-root .scale-opt .dial{width:40px;height:40px;border-radius:50%;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:var(--ink-soft);transition:all .15s;background:var(--card);}
+#pulse-root .scale-opt input:checked+.dial{color:#fff;border-color:transparent;}
+#pulse-root .nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:28px;}
+#pulse-root .results-hero{text-align:center;margin-bottom:8px;}
+#pulse-root .overall-score{font-family:'Fraunces',serif;font-size:54px;font-weight:600;}
+#pulse-root .overall-label{color:var(--ink-soft);font-size:14px;margin-top:-4px;}
+#pulse-root .ring-result-row{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--line);}
+#pulse-root .ring-result-row:last-child{border-bottom:none;}
+#pulse-root .ring-result-bar-wrap{flex:1;}
+#pulse-root .ring-result-top{display:flex;justify-content:space-between;font-size:14px;margin-bottom:6px;}
+#pulse-root .ring-result-top .rname{font-weight:700;}
+#pulse-root .ring-result-track{height:9px;border-radius:999px;background:var(--line);overflow:hidden;}
+#pulse-root .ring-result-track .fill{height:100%;border-radius:999px;transition:width 1s cubic-bezier(.16,1,.3,1);width:0%;}
+#pulse-root .swatch{width:14px;height:14px;border-radius:50%;flex:none;}
+#pulse-root .insight-card{border-radius:var(--radius);padding:22px 24px;margin-top:22px;}
+#pulse-root .insight-card p{font-size:15px;margin:0;}
+#pulse-root .closing-card{border-radius:var(--radius);padding:24px 26px;margin-top:22px;background:var(--card);border:1px solid var(--line);}
+#pulse-root .closing-card h3{font-size:18px;margin-bottom:10px;}
+#pulse-root .closing-card textarea{width:100%;font-family:'Inter',sans-serif;font-size:14px;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);resize:vertical;min-height:80px;margin-top:6px;}
+#pulse-root .actions-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px;justify-content:center;}
+#pulse-root .footer-note{text-align:center;margin-top:20px;font-size:13px;color:var(--ink-soft);}
+#pulse-root .history-section{margin-top:28px;}
+#pulse-root .coach-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:28px 26px;text-align:center;}
+#pulse-root .coach-card h3{font-size:20px;margin-bottom:10px;}
+#pulse-root .coach-card p{font-size:14px;color:var(--ink-soft);margin-bottom:20px;}
+#pulse-root .btn-sheet{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;border-radius:999px;background:#1a7340;color:#fff;font-weight:600;font-size:15px;text-decoration:none;transition:transform .15s;}
+#pulse-root .btn-sheet:hover{transform:translateY(-1px);}
+@media(max-width:520px){#pulse-root .scale-legend-bar .leg-end{display:none;}#pulse-root .intro-hero h1{font-size:26px;}#pulse-root .overall-score{font-size:42px;}}
+@media print{#pulse-root .no-print{display:none!important;}#pulse-root{background:#fff;}}
+</style>
+
+<div id="pulse-root"><div id="pulse-app"></div></div>
+
+<script>
+(function(){
+
+// ============================================================
+// CONFIGURATION — fill these in after setting up Google Sheets
+// ============================================================
+var APPS_SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL_HERE';
+var SHEET_URL       = 'YOUR_GOOGLE_SHEET_URL_HERE';
+// ============================================================
+
+var RINGS=[
+  {key:'health',name:'Health',subtitle:'How are you feeling physically right now?',color:'var(--health)',hex:'#4F7A5B',bg:'var(--health-bg)',questions:['I feel physically energized and capable in my body.','I feel rested and like sleep is supporting me.','I am fueling my body in ways that support how I want to feel.','I feel able to manage stress without being overwhelmed by it.','I am paying attention to what my body needs and responding to it.'],lowPrompt:'Your body is asking for something. What is one small, specific thing — more water, an earlier bedtime, a walk — you could offer it today?'},
+  {key:'joy',name:'Joy',subtitle:'Where is your sense of pleasure and delight right now?',color:'var(--joy)',hex:'#CC8A2E',bg:'var(--joy-bg)',questions:['I am making time for things that bring me genuine enjoyment.','I feel able to notice and appreciate the good things around me.','I feel permission to rest or play without guilt.','What I am doing feels meaningful or satisfying to me.','I feel I deserve the happiness and pleasure in my life.'],lowPrompt:'Joy is running low. What is one small, guilt-free pleasure you could give yourself permission to have today or this week?'},
+  {key:'love',name:'Love',subtitle:'How are you feeling in your connections right now?',color:'var(--love)',hex:'#B85368',bg:'var(--love-bg)',questions:['I feel loved and supported by the people in my life.','I feel connected to the relationships that matter most to me.','I feel emotionally safe in at least one key relationship.','I am showing up for others with care and presence.','I am treating myself with kindness and self-respect.'],lowPrompt:'Connection is asking for attention. Who is one person you could reach out to — or one moment of kindness you could offer yourself — right now?'},
+  {key:'wealth',name:'Wealth',subtitle:'How are you feeling about your financial life right now?',color:'var(--wealth)',hex:'#2E6B72',bg:'var(--wealth-bg)',questions:['I feel financially stable and able to meet my obligations.','I feel like I am moving — even slowly — in the right financial direction.','I feel my relationship with money is grounded rather than anxious.','I feel confident and clear about my financial priorities right now.','I am approaching money with intention rather than avoidance.'],lowPrompt:'Wealth is feeling heavy. What is one small step toward clarity — not a full plan — you could take today?'},
+  {key:'curiosity',name:'Curiosity',subtitle:'How engaged and alive does your mind feel right now?',color:'var(--curiosity)',hex:'#7A5C92',bg:'var(--curiosity-bg)',questions:['I feel genuinely interested or curious about something in my life right now.','I feel mentally alive and stimulated.','I am open to ideas or perspectives that stretch my thinking.','I feel drawn toward learning, exploring, or growing in some direction.','I feel like my mind is engaged, not just going through the motions.'],lowPrompt:'Your curiosity is quiet. What is one small, low-stakes thing you could read, watch, ask about, or try — just for the sake of interest?'}
+];
+
+var state={screen:'intro',ringIndex:0,info:{firstName:'',lastName:'',email:''},answers:{},results:null,history:null,saveStatus:'',closingNote:''};
+
+function el(){return document.getElementById('pulse-app');}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function scrollTop(){window.scrollTo({top:0,behavior:'smooth'});}
+
+function radarSVG(scoresMap,prevScoresMap){
+  var cx=150,cy=155,n=RINGS.length,maxR=100,step=2*Math.PI/n;
+  function pt(i,v){var a=i*step-Math.PI/2;var r=(v/5)*maxR;return[cx+r*Math.cos(a),cy+r*Math.sin(a)];}
+  var grid='';
+  [1,2,3,4,5].forEach(function(l){var pts=RINGS.map(function(_,i){return pt(i,l);});var d=pts.map(function(p,i){return(i===0?'M':'L')+p[0].toFixed(1)+' '+p[1].toFixed(1);}).join(' ')+'Z';grid+='<path d="'+d+'" stroke="#E6DCC6" stroke-width="1" fill="none" opacity="'+(l===5?.9:.5)+'"/>';var lp=pt(0,l);grid+='<text x="'+(lp[0]+4).toFixed(1)+'" y="'+lp[1].toFixed(1)+'" font-size="9" fill="#756A5B" font-family="Inter,sans-serif">'+l+'</text>';});
+  var axes='';RINGS.forEach(function(ring,i){var ep=pt(i,5);axes+='<line x1="'+cx+'" y1="'+cy+'" x2="'+ep[0].toFixed(1)+'" y2="'+ep[1].toFixed(1)+'" stroke="#E6DCC6" stroke-width="1.5"/>';var lp=pt(i,5.8);var anchor=lp[0]<cx-4?'end':lp[0]>cx+4?'start':'middle';axes+='<text x="'+lp[0].toFixed(1)+'" y="'+(lp[1]+4).toFixed(1)+'" font-size="11" font-weight="700" fill="'+ring.hex+'" font-family="Fraunces,Georgia,serif" text-anchor="'+anchor+'">'+ring.name+'</text>';});
+  function polygon(sc,opacity,strokeColor,fill){if(!sc)return'';var pts=RINGS.map(function(r,i){return pt(i,sc[r.key].avg);});var d=pts.map(function(p,i){return(i===0?'M':'L')+p[0].toFixed(1)+' '+p[1].toFixed(1);}).join(' ')+'Z';var dots=pts.map(function(p,i){return'<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="5" fill="'+RINGS[i].hex+'" opacity="'+opacity+'"/>';}).join('');return'<path d="'+d+'" stroke="'+strokeColor+'" stroke-width="2.5" fill="'+fill+'" opacity="'+opacity+'"/>'+dots;}
+  var prev=prevScoresMap?polygon(prevScoresMap,.35,'#aaa','rgba(180,180,180,0.07)'):'';
+  var curr=scoresMap?'<g>'+polygon(scoresMap,.92,'#2B2620','rgba(43,38,32,0.06)')+'</g>':'';
+  var legend=prevScoresMap?'<text x="10" y="300" font-size="10" fill="#aaa" font-family="Inter,sans-serif">— previous</text><text x="10" y="312" font-size="10" fill="#2B2620" font-family="Inter,sans-serif">— current</text>':'';
+  return'<svg viewBox="0 0 300 320" width="100%" style="max-width:280px;display:block;margin:0 auto;">'+grid+axes+prev+curr+legend+'</svg>';
+}
+
+function renderIntro(){
+  var legend=RINGS.map(function(r){return'<div class="item"><span class="dot" style="background:'+r.color+'"></span><span class="rname">'+r.name+'</span></div>';}).join('');
+  el().innerHTML='<div class="wrap intro-hero"><div class="eyebrow">NExT &middot; Pulse Check</div>'+radarSVG(null,null)+'<h1 style="margin-top:16px;">How are you, right now?</h1><p class="lede">A quick read across your five rings. 25 questions, present-tense, no right answers.</p><button class="btn btn-primary no-print" data-action="go-info">Begin</button><div class="ring-legend">'+legend+'</div><div class="footer-link-row no-print"><button class="btn-ghost" data-action="go-coach">Coach / admin view</button></div></div>';
+}
+
+function renderInfo(){
+  var i=state.info;var valid=i.firstName.trim()&&i.lastName.trim()&&/\S+@\S+\.\S+/.test(i.email);
+  el().innerHTML='<div class="wrap"><div class="eyebrow">Before you begin</div><h2 style="font-size:24px;margin-bottom:22px;">A little about you</h2><div class="card" style="display:flex;flex-direction:column;gap:16px;"><div><label class="field-label">First name</label><input type="text" id="f-first" value="'+esc(i.firstName)+'" placeholder="First name"/></div><div><label class="field-label">Last name</label><input type="text" id="f-last" value="'+esc(i.lastName)+'" placeholder="Last name"/></div><div><label class="field-label">Email</label><input type="email" id="f-email" value="'+esc(i.email)+'" placeholder="you@email.com"/></div></div><div class="nav-row"><button class="btn-ghost" data-action="go-intro">&larr; Back</button><button class="btn btn-primary" data-action="start-survey" '+(valid?'':'disabled')+'>Start &rarr;</button></div></div>';
+  ['f-first','f-last','f-email'].forEach(function(id){document.getElementById(id).addEventListener('input',function(e){var map={'f-first':'firstName','f-last':'lastName','f-email':'email'};state.info[map[id]]=e.target.value;render();var node=document.getElementById(id);if(node){node.focus();node.setSelectionRange(node.value.length,node.value.length);}});});
+}
+
+function renderSurvey(){
+  var ring=RINGS[state.ringIndex];
+  var answered=ring.questions.filter(function(_,idx){return state.answers[ring.key+'_'+idx]!==undefined;}).length;
+  var progress=RINGS.map(function(r,idx){var isPast=idx<state.ringIndex,isCurrent=idx===state.ringIndex;var w=isPast?'100%':(isCurrent?(answered/5*100)+'%':'0%');return'<div class="progress-seg"><div class="fill" style="width:'+w+';background:'+r.color+'"></div></div>';}).join('');
+  var scale='<div class="scale-legend-bar"><span class="leg-end">Strongly<br>Disagree</span><div class="leg-nums">'+[1,2,3,4,5].map(function(n){return'<div class="leg-n">'+n+'</div>';}).join('')+'</div><span class="leg-end right">Strongly<br>Agree</span></div>';
+  var blocks=ring.questions.map(function(q,idx){var qid=ring.key+'_'+idx;var val=state.answers[qid];var opts=[1,2,3,4,5].map(function(n){var checked=val===n?'checked':'';var ds=val===n?'background:'+ring.color+';border-color:'+ring.color+';transform:scale(1.06);color:#fff;':'';return'<label class="scale-opt"><input type="radio" name="'+qid+'" value="'+n+'" '+checked+' data-qid="'+qid+'"/><span class="dial" style="'+ds+'">'+n+'</span></label>';}).join('');return'<div class="q-block"><div class="q-text">'+(idx+1)+'. '+esc(q)+'</div><div class="scale-opts">'+opts+'</div></div>';}).join('');
+  var isLast=state.ringIndex===RINGS.length-1;var canContinue=answered===5;
+  el().innerHTML='<div class="wrap"><div class="progress-row">'+progress+'</div><div class="ring-header"><h2 style="color:'+ring.color+'">'+ring.name+'</h2><span class="ring-count">'+answered+' / 5</span></div><div class="ring-subtitle">'+ring.subtitle+'</div><div class="card" style="padding:0 22px 16px;">'+scale+blocks+'</div><div class="nav-row"><button class="btn-ghost" data-action="prev-ring">&larr; '+(state.ringIndex===0?'Back':'Previous')+'</button><button class="btn btn-primary" data-action="next-ring" '+(canContinue?'':'disabled')+'>'+(isLast?'See results':'Next: '+RINGS[state.ringIndex+1].name)+' &rarr;</button></div></div>';
+  el().querySelectorAll('input[type=radio]').forEach(function(inp){inp.addEventListener('change',function(e){state.answers[e.target.getAttribute('data-qid')]=parseInt(e.target.value,10);render();});});
+}
+
+function computeResults(){
+  var scores={};
+  RINGS.forEach(function(ring){var vals=ring.questions.map(function(_,idx){return state.answers[ring.key+'_'+idx];});var avg=vals.reduce(function(a,b){return a+b;},0)/5;scores[ring.key]={avg:avg,vals:vals};});
+  var overall=RINGS.reduce(function(s,r){return s+scores[r.key].avg;},0)/RINGS.length;
+  var lowestKey=RINGS.slice().sort(function(a,b){return scores[a.key].avg-scores[b.key].avg;})[0].key;
+  return{scores:scores,overall:overall,lowestKey:lowestKey};
+}
+
+function saveSubmission(results){
+  // Save personal history to localStorage
+  var histKey='pulse-history:'+state.info.email.toLowerCase().trim();
+  var hist=[];
+  try{hist=JSON.parse(localStorage.getItem(histKey))||[];}catch(e){}
+  hist.unshift({date:new Date().toISOString(),overall:results.overall,scores:results.scores});
+  if(hist.length>20)hist=hist.slice(0,20);
+  localStorage.setItem(histKey,JSON.stringify(hist));
+  state.history=hist;
+
+  // Post to Google Sheets
+  if(APPS_SCRIPT_URL&&APPS_SCRIPT_URL!=='YOUR_APPS_SCRIPT_URL_HERE'){
+    fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify({type:'pulse',firstName:state.info.firstName,lastName:state.info.lastName,email:state.info.email,date:new Date().toISOString(),overall:results.overall,scores:results.scores,answers:state.answers,note:state.closingNote})})
+    .then(function(){state.saveStatus='saved';render();})
+    .catch(function(){state.saveStatus='local';render();});
+  } else {
+    state.saveStatus='local';
+    render();
+  }
+}
+
+function loadHistory(){
+  var histKey='pulse-history:'+state.info.email.toLowerCase().trim();
+  try{state.history=JSON.parse(localStorage.getItem(histKey))||[];}catch(e){state.history=[];}
+}
+
+function historyHTML(history){
+  if(!history||history.length<2)return'';
+  var recent=history.slice(0,8).reverse();
+  var cols=recent.map(function(entry){var dateStr=new Date(entry.date).toLocaleDateString('en-US',{month:'short',day:'numeric'});var bars=RINGS.map(function(ring){var pct=(entry.scores[ring.key].avg/5*100).toFixed(0);return'<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;"><div style="width:100%;background:var(--line);border-radius:3px;height:36px;display:flex;align-items:flex-end;overflow:hidden;"><div style="width:100%;height:'+pct+'%;background:'+ring.hex+';border-radius:3px 3px 0 0;"></div></div><span style="font-size:8px;color:var(--ink-soft);">'+ring.name.slice(0,3)+'</span></div>';}).join('');return'<div style="flex:1;min-width:0;"><div style="display:flex;gap:2px;align-items:flex-end;">'+bars+'</div><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--ink-soft);margin-top:5px;"><span>'+dateStr+'</span><span style="font-weight:700;color:var(--ink);">'+entry.overall.toFixed(1)+'</span></div></div>';}).join('<div style="width:1px;background:var(--line);margin:0 3px;"></div>');
+  return'<div class="card history-section"><h3 style="font-size:17px;margin-bottom:12px;">Your check-in history</h3><p style="font-size:13px;color:var(--ink-soft);margin-bottom:14px;">Patterns over time on this device.</p><div style="display:flex;gap:0;align-items:stretch;overflow-x:auto;">'+cols+'</div></div>';
+}
+
+function renderResults(){
+  var r=state.results;
+  var prevScores=(state.history&&state.history.length>1)?state.history[1].scores:null;
+  var rows=RINGS.map(function(ring){var s=r.scores[ring.key];var pct=(s.avg/5*100).toFixed(0);return'<div class="ring-result-row"><span class="swatch" style="background:'+ring.color+'"></span><div class="ring-result-bar-wrap"><div class="ring-result-top"><span class="rname">'+ring.name+'</span><span>'+s.avg.toFixed(1)+' / 5</span></div><div class="ring-result-track"><div class="fill" style="width:'+pct+'%;background:'+ring.color+'"></div></div></div></div>';}).join('');
+  var lowRing=RINGS.filter(function(r2){return r2.key===r.lowestKey;})[0];
+  var statusMsg=state.saveStatus==='saved'?'Saved to the NExT coaching sheet.':state.saveStatus==='local'?'Saved on this device. (Connect Google Sheets for coach access.)':'Saving&hellip;';
+  el().innerHTML='<div class="wrap"><div class="results-hero">'+radarSVG(r.scores,prevScores)+'<div class="overall-score" style="margin-top:10px;">'+r.overall.toFixed(1)+'</div><div class="overall-label">overall, out of 5'+(prevScores?' &nbsp;·&nbsp; <span style="color:var(--ink-soft);font-size:12px;">gray = previous</span>':'')+'</div></div><div class="card" style="margin-top:22px;">'+rows+'</div><div class="insight-card" style="background:'+lowRing.bg+';"><div class="eyebrow" style="color:'+lowRing.color+';margin-bottom:6px;">'+lowRing.name+' is asking for attention</div><p>'+lowRing.lowPrompt+'</p></div><div class="closing-card"><h3>One thing</h3><p style="font-size:14px;color:var(--ink-soft);margin:6px 0 0;">Which ring is asking for your attention right now — and what\'s one small, concrete thing you could do in the next 7 days?</p><textarea id="closing-note" placeholder="Write it here — even a few words makes it real." data-action="note">'+esc(state.closingNote)+'</textarea></div>'+historyHTML(state.history)+'<div class="actions-row no-print"><button class="btn btn-secondary" data-action="print">Print / Save as PDF</button><button class="btn btn-secondary" data-action="restart">Check in again</button></div><div class="footer-note no-print">'+statusMsg+'</div></div>';
+  var ta=document.getElementById('closing-note');if(ta){ta.addEventListener('input',function(e){state.closingNote=e.target.value;});}
+}
+
+function renderCoach(){
+  var sheetConfigured=SHEET_URL&&SHEET_URL!=='YOUR_GOOGLE_SHEET_URL_HERE';
+  el().innerHTML='<div class="wrap"><div class="coach-card"><h3>Coach / Admin View</h3><p>All Pulse Check submissions are saved to your NExT Google Sheet. Open it below to see all responses, including the "one thing" each person committed to.</p>'+(sheetConfigured?'<a class="btn-sheet" href="'+esc(SHEET_URL)+'" target="_blank">&#x1F4C4; Open Google Sheet</a>':'<p style="color:var(--love);font-weight:600;">Google Sheet URL not configured yet.<br>Follow the setup instructions to connect.</p>')+'</div><div class="nav-row" style="margin-top:24px;"><button class="btn-ghost" data-action="go-intro">&larr; Back</button></div></div>';
+}
+
+function render(){
+  if(state.screen==='intro')renderIntro();
+  else if(state.screen==='info')renderInfo();
+  else if(state.screen==='survey')renderSurvey();
+  else if(state.screen==='results')renderResults();
+  else if(state.screen==='coach')renderCoach();
+}
+
+document.addEventListener('click',function(e){
+  var btn=e.target.closest('[data-action]');if(!btn)return;
+  var action=btn.getAttribute('data-action');
+  if(action==='note')return;
+  if(action==='go-info'){state.screen='info';scrollTop();render();}
+  else if(action==='go-intro'){state.screen='intro';scrollTop();render();}
+  else if(action==='go-coach'){state.screen='coach';scrollTop();render();}
+  else if(action==='start-survey'){state.screen='survey';state.ringIndex=0;scrollTop();render();}
+  else if(action==='prev-ring'){if(state.ringIndex===0){state.screen='info';}else{state.ringIndex--;}scrollTop();render();}
+  else if(action==='next-ring'){
+    if(state.ringIndex<RINGS.length-1){state.ringIndex++;scrollTop();render();}
+    else{state.results=computeResults();loadHistory();state.screen='results';state.saveStatus='saving';scrollTop();render();saveSubmission(state.results);}
+  }
+  else if(action==='restart'){state={screen:'intro',ringIndex:0,info:{firstName:'',lastName:'',email:''},answers:{},results:null,history:null,saveStatus:'',closingNote:''};scrollTop();render();}
+  else if(action==='print'){window.print();}
+});
+
+render();
+})();
+</script>
