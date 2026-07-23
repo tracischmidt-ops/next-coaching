@@ -143,7 +143,7 @@ function radarSVG(scoresMap,prevScoresMap,avgKey){
 /* ---- Screens ---- */
 function renderIntro(){
   var legend=RINGS.map(function(r){return'<div class="item"><span class="dot" style="background:'+r.color+'"></span><span class="rname">'+r.name+':</span><span class="desc">'+r.subtitle+'</span></div>';}).join('');
-  el().innerHTML='<div class="wrap intro-hero"><div class="eyebrow">NExT &middot; Whole Self Annual Survey</div>'+radarSVG(null,null,'ringAvg')+'<h1 style="margin-top:18px;">Five rings. One whole self.</h1><p class="lede">A personal baseline across Health, Joy, Love, Wealth, and Curiosity. Rate each statement 1–5. Complete at the start and end of the year to track your growth.</p><button class="btn btn-primary no-print" data-action="go-info">Begin the survey</button><div class="ring-legend">'+legend+'</div><div class="footer-link-row no-print"><button class="btn-ghost" data-action="go-coach">Coach / admin view</button></div></div>';
+  el().innerHTML='<div class="wrap intro-hero"><div class="eyebrow">NExT &middot; Whole Self Annual Survey</div>'+radarSVG(null,null,'ringAvg')+'<h1 style="margin-top:18px;">Five rings. One whole self.</h1><p class="lede">A personal baseline across Health, Joy, Love, Wealth, and Curiosity. Rate each statement 1–5. Complete at the start and end of the year to track your growth.</p><button class="btn btn-primary no-print" data-action="go-info">Begin the survey</button><div class="ring-legend">'+legend+'</div></div>';
 }
 
 function renderInfo(){

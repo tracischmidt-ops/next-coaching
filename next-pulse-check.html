@@ -116,7 +116,7 @@ function radarSVG(scoresMap,prevScoresMap){
 
 function renderIntro(){
   var legend=RINGS.map(function(r){return'<div class="item"><span class="dot" style="background:'+r.color+'"></span><span class="rname">'+r.name+'</span></div>';}).join('');
-  el().innerHTML='<div class="wrap intro-hero"><div class="eyebrow">NExT &middot; Pulse Check</div>'+radarSVG(null,null)+'<h1 style="margin-top:16px;">How are you, right now?</h1><p class="lede">A quick read across your five rings. 25 questions, present-tense, no right answers.</p><button class="btn btn-primary no-print" data-action="go-info">Begin</button><div class="ring-legend">'+legend+'</div><div class="footer-link-row no-print"><button class="btn-ghost" data-action="go-coach">Coach / admin view</button></div></div>';
+  el().innerHTML='<div class="wrap intro-hero"><div class="eyebrow">NExT &middot; Pulse Check</div>'+radarSVG(null,null)+'<h1 style="margin-top:16px;">How are you, right now?</h1><p class="lede">A quick read across your five rings. 25 questions, present-tense, no right answers.</p><button class="btn btn-primary no-print" data-action="go-info">Begin</button><div class="ring-legend">'+legend+'</div></div>';
 }
 
 function renderInfo(){
