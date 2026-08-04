@@ -1,0 +1,361 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..600&family=Inter:wght@400;500;600;700&display=swap');
+
+:root{
+  --bg:#FAF6EF; --card:#FFFFFF; --ink:#2B2620; --ink-soft:#756A5B; --line:#E6DCC6;
+  --accent:#4F7A5B; --accent-light:#EAF1EB;
+  --health:#4F7A5B; --joy:#CC8A2E; --love:#B85368; --wealth:#2E6B72; --curiosity:#7A5C92;
+  --radius:18px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--bg);min-height:100vh;line-height:1.55;}
+h1,h2,h3,h4{font-family:'Fraunces',Georgia,serif;font-weight:600;letter-spacing:-.01em;}
+.wrap{max-width:700px;margin:0 auto;padding:36px 20px 80px;}
+button{font-family:'Inter',sans-serif;cursor:pointer;border:none;background:none;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 28px;border-radius:999px;font-weight:600;font-size:15px;transition:transform .15s,opacity .15s;}
+.btn-primary{background:var(--ink);color:var(--bg);}
+.btn-primary:disabled{opacity:.35;cursor:not-allowed;}
+.btn-primary:not(:disabled):hover{transform:translateY(-1px);}
+.btn-ghost{background:transparent;color:var(--ink-soft);text-decoration:underline;padding:8px 4px;font-size:14px;}
+.btn-ghost:hover{color:var(--ink);}
+.btn-secondary{background:transparent;border:1.5px solid var(--ink);color:var(--ink);}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px;}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:28px 26px;}
+
+/* Progress */
+.progress-wrap{margin-bottom:28px;}
+.progress-label{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-soft);margin-bottom:8px;font-weight:600;}
+.progress-track{height:5px;background:var(--line);border-radius:999px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--accent);border-radius:999px;transition:width .4s ease;}
+
+/* Section header */
+.section-header{margin-bottom:24px;}
+.section-header h2{font-size:24px;margin-bottom:6px;}
+.section-header p{font-size:14px;color:var(--ink-soft);}
+
+/* Field */
+.field{margin-bottom:20px;}
+.field:last-child{margin-bottom:0;}
+.field-label{display:block;font-size:14px;font-weight:600;margin-bottom:8px;color:var(--ink);}
+.field-label .opt{font-weight:400;color:var(--ink-soft);font-size:13px;} 
+.field input[type=text],
+.field input[type=email],
+.field textarea,
+.field select{
+  width:100%;font-family:'Inter',sans-serif;font-size:15px;
+  padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;
+  background:var(--card);color:var(--ink);
+}
+.field textarea{resize:vertical;min-height:80px;}
+.field select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23756A5B' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;}
+.field input:focus-visible,.field textarea:focus-visible,.field select:focus-visible{outline:2px solid var(--ink);outline-offset:1px;}
+
+/* Radio / checkbox options */
+.options-grid{display:flex;flex-direction:column;gap:8px;}
+.options-grid.two-col{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.opt-item{position:relative;}
+.opt-item input{position:absolute;opacity:0;width:100%;height:100%;cursor:pointer;left:0;top:0;z-index:1;}
+.opt-item label{
+  display:flex;align-items:center;gap:10px;padding:11px 14px;
+  border:1.5px solid var(--line);border-radius:12px;cursor:pointer;
+  font-size:14px;transition:all .15s;background:var(--card);
+}
+.opt-item label .check{width:18px;height:18px;border-radius:50%;border:2px solid var(--line);flex:none;transition:all .15s;display:flex;align-items:center;justify-content:center;}
+.opt-item input[type=checkbox]+label .check{border-radius:5px;}
+.opt-item input:checked+label{border-color:var(--accent);background:var(--accent-light);}
+.opt-item input:checked+label .check{background:var(--accent);border-color:var(--accent);}
+.opt-item input:checked+label .check::after{content:'✓';color:#fff;font-size:11px;font-weight:700;}
+.opt-item input:focus-visible+label{outline:2px solid var(--ink);outline-offset:2px;}
+
+/* Scale */
+.scale-wrap{margin-top:4px;}
+.scale-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--ink-soft);margin-bottom:8px;text-transform:uppercase;letter-spacing:.03em;}
+.scale-opts{display:flex;gap:6px;}
+.scale-opt{position:relative;flex:1;}
+.scale-opt input{position:absolute;opacity:0;width:100%;height:100%;cursor:pointer;left:0;top:0;}
+.scale-opt label{display:flex;align-items:center;justify-content:center;height:40px;border:1.5px solid var(--line);border-radius:10px;font-size:13px;font-weight:700;color:var(--ink-soft);cursor:pointer;transition:all .15s;background:var(--card);}
+.scale-opt input:checked+label{background:var(--accent);border-color:var(--accent);color:#fff;}
+
+/* Nav */
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:28px;}
+
+/* Intro */
+.intro-hero{text-align:center;padding:12px 0 8px;}
+.intro-hero h1{font-size:32px;margin-bottom:14px;}
+.intro-hero p.lede{font-size:15px;color:var(--ink-soft);max-width:480px;margin:0 auto 28px;}
+.ring-dots{display:flex;justify-content:center;gap:10px;margin-bottom:32px;}
+.ring-dot{width:14px;height:14px;border-radius:50%;}
+
+/* Confirmation */
+.confirm-hero{text-align:center;padding:20px 0;}
+.confirm-hero .big-check{font-size:56px;margin-bottom:16px;}
+.confirm-hero h2{font-size:28px;margin-bottom:12px;}
+.confirm-hero p{font-size:15px;color:var(--ink-soft);max-width:420px;margin:0 auto;}
+
+@media(max-width:520px){
+  .options-grid.two-col{grid-template-columns:1fr;}
+  .intro-hero h1{font-size:26px;}
+}
+@media print{.no-print{display:none!important;}}
+</style>
+
+<div id="match-app"></div>
+
+<script>
+(function(){
+
+// ============================================================
+// CONFIGURATION
+// ============================================================
+var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyogCAaJqoXDzg9g4kfDwUN_vm0_APXU_BWsVDgDaXEqtd7y-kLXYeOR-Kwis-IO-cazg/exec';
+// ============================================================
+
+var SECTIONS = [
+  { id:'intro' },
+  {
+    id:'basic', title:'About You', subtitle:'Let\'s start with a few basics.',
+    fields:[
+      { id:'firstName', label:'First name', type:'text', required:true },
+      { id:'preferredName', label:'What do you like to be called? (if different)', type:'text' },
+      { id:'email', label:'Email address', type:'email', required:true },
+      { id:'ageRange', label:'Age range', type:'radio', options:['Under 30','30–39','40–49','50–59','60–69','70+'], required:true },
+      { id:'partnerStatus', label:'Current relationship status', type:'radio', options:['Single','Partnered / married','Divorced / widowed','Prefer not to say'], required:true },
+      { id:'timezone', label:'Time zone', type:'select', options:['Eastern','Central','Mountain','Pacific','Alaska','Hawaii','Outside U.S.'], required:true },
+      { id:'region', label:'Geography (region)', type:'select', options:['Northeast – New England','Northeast – Mid Atlantic','Southeast – South Atlantic','Southeast – Florida','Southeast – Gulf Coast','Midwest – Great Lakes','Midwest – Plains','Southwest – Texas','Southwest – Desert Southwest','West – California','West – Pacific Northwest','West – Mountain West','Canada','United Kingdom / Ireland','Europe','Australia / New Zealand','Asia','Latin America','Other'], required:true },
+      { id:'regionOther', label:'If you selected "Other", please specify', type:'text' }
+    ]
+  },
+  {
+    id:'career', title:'Career & Life Stage', subtitle:'Help us understand where you are professionally and personally.',
+    fields:[
+      { id:'careerStage', label:'Current career stage', type:'radio', options:['Early career','Mid-career','Senior leadership','Entrepreneur / business owner','Transitioning careers','Preparing for retirement','Semi-retired','Fully retired','Other'], required:true },
+      { id:'careerStageOther', label:'If other, please describe', type:'text' },
+      { id:'industry', label:'Industry', type:'select', options:['Legal services','Finance / banking / private equity','Technology / software','Healthcare / medical','Education','Government / public sector','Real estate / construction','Manufacturing / industrial','Media / marketing','Nonprofit / philanthropy','Consulting / professional services','Agriculture / food systems','Retail / hospitality','Other'], required:true },
+      { id:'industryOther', label:'If other industry, please specify', type:'text' },
+      { id:'retirementStage', label:'Where are you in thinking about retirement?', type:'radio', options:['Not thinking about it yet','Beginning to think about it','Within 5–10 years','Within 2–5 years','Actively preparing now','Already retired and redefining life'], required:true }
+    ]
+  },
+  {
+    id:'style', title:'How You Work Best With Others', subtitle:'No right answers here — we\'re looking for what genuinely fits you.',
+    fields:[
+      { id:'supportStyle', label:'When working toward a goal with someone else, what kind of support helps you most?', type:'radio', options:['Encouraging and supportive — I need someone in my corner','Direct and honest — I need someone who tells me the truth','Structured and goal-oriented — I need someone who holds me to specifics','Reflective and thoughtful — I need space to think things through together','A balance of encouragement and honest challenge'], required:true },
+      { id:'naturalStyle', label:'When a friend or colleague is working toward a goal, how do you naturally show up for them?', type:'radio', options:['Cheerleader / encourager','Honest truth-teller','Strategic thinker','Structured planner','Reflective listener'], required:true },
+      { id:'commStyle', label:'How do you prefer to process and communicate?', type:'radio', options:['I like to think out loud and process things together in real time','I prefer to reflect first, then share what I\'ve worked through','Depends on the topic — I do both'], required:true },
+      { id:'pastSupport', label:'Think of a time you were working toward a change or goal with someone else\'s support. What made it fall flat?', type:'radio', subtitle:'(If you\'ve never had this kind of support, just select the last option.)', options:['They were too pushy or intense','They were too easy on me — not enough honest feedback','They were inconsistent or hard to reach','We started strong but lost momentum','I\'ve never had this kind of support before'], required:true },
+      { id:'frequency', label:'How often would you ideally connect with a growth partner?', type:'radio', options:['Weekly','Every two weeks','Monthly','Flexible — whatever works'], required:true },
+      { id:'meetingLength', label:'How long are you available for each meeting?', type:'radio', options:['30 minutes','45 minutes','60 minutes','Flexible'], required:true },
+      { id:'format', label:'Preferred meeting format (select all that apply)', type:'checkbox', options:['Video calls','Phone calls','Text check-ins','Email reflections','In-person (if local)'], required:true }
+    ]
+  },
+  {
+    id:'personality', title:'Your Style & Personality', subtitle:'These help us find someone who meshes with how you naturally operate.',
+    fields:[
+      { id:'humor', label:'How important is humor and lightness to you in a working relationship?', type:'scale', min:1, max:5, minLabel:'Very serious', maxLabel:'Humor essential', required:true },
+      { id:'organization', label:'How would you describe your natural organization style?', type:'scale', min:1, max:5, minLabel:'Spontaneous', maxLabel:'Highly structured', required:true },
+      { id:'punctuality', label:'How important is punctuality and keeping to a schedule?', type:'scale', min:1, max:5, minLabel:'Very flexible', maxLabel:'Very punctual', required:true },
+      { id:'energy', label:'How would you describe your general energy style?', type:'radio', options:['Quiet and reflective','Balanced — somewhere in the middle','Energetic and driven'], required:true }
+    ]
+  },
+  {
+    id:'growth', title:'Your Growth Focus', subtitle:'This is where your Five Rings come in.',
+    fields:[
+      { id:'rings', label:'Which rings are you most focused on right now? (select all that apply)', type:'checkbox', options:['Health','Joy','Love / relationships','Wealth','Curiosity'], required:true },
+      { id:'stuck', label:'Where do you feel most stuck right now?', subtitle:'Be as honest as you can — this helps us find someone who gets it.', type:'textarea', required:true },
+      { id:'helpWith', label:'What are you hoping a growth partner helps you with most? (select all that apply)', type:'checkbox', options:['Staying consistent with goals','Big life decisions','Career transition','Preparing for or navigating retirement','Personal growth','Building new habits','Expanding curiosity and learning','Improving relationships'], required:true },
+      { id:'conversations', label:'What conversations energize you most? (select all that apply)', type:'checkbox', options:['Big life ideas and possibilities','Practical problem solving','Habit building and consistency','Career strategy','Personal reflection','Creative thinking'] }
+    ]
+  },
+  {
+    id:'matching', title:'Matching Preferences', subtitle:'A few final questions to help us find the right fit.',
+    fields:[
+      { id:'lifeStageMatch', label:'Do you prefer a partner who is in a similar life stage, or are you open to someone at a different stage?', type:'radio', options:['Very similar life stage — I want someone who really gets where I am','Somewhat similar — close enough to relate, open to some difference','Open to different perspectives — stage matters less than connection'], required:true },
+      { id:'genderPref', label:'Gender preference for your partner', type:'radio', options:['No preference','Female','Male','Prefer not to say'] },
+      { id:'dealbreaker', label:'Is there anything about a potential partner that would be a dealbreaker for you?', subtitle:'Optional — but helpful if there\'s something important.', type:'textarea' },
+      { id:'availability', label:'Best meeting times (select all that apply)', type:'checkbox', options:['Weekday mornings','Weekday afternoons','Weekday evenings','Weekend mornings','Weekend afternoons','Weekend evenings'], required:true }
+    ]
+  },
+  {
+    id:'commitment', title:'Commitment & Intention', subtitle:'Almost done — two final questions.',
+    fields:[
+      { id:'commitment', label:'How committed are you to showing up consistently for this partnership?', type:'scale', min:1, max:10, minLabel:'Casual', maxLabel:'Fully committed', required:true },
+      { id:'success', label:'What would make this experience a success for you six months from now?', subtitle:'Take a moment with this one — your answer helps us match you well.', type:'textarea', required:true },
+      { id:'anythingElse', label:'Anything else we should know about you?', type:'textarea' }
+    ]
+  },
+  { id:'confirm' }
+];
+
+var SECTION_IDS = SECTIONS.map(function(s){return s.id;});
+var state = { sectionIndex: 0, data: {}, saveStatus: '' };
+
+function el(){ return document.getElementById('match-app'); }
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function scrollTop(){ window.scrollTo({top:0,behavior:'smooth'}); }
+
+function currentSection(){ return SECTIONS[state.sectionIndex]; }
+
+/* ---- Validation ---- */
+function validateSection(sec){
+  if(!sec.fields) return true;
+  for(var i=0;i<sec.fields.length;i++){
+    var f=sec.fields[i];
+    if(!f.required) continue;
+    var val=state.data[f.id];
+    if(f.type==='checkbox'){if(!val||!val.length) return false;}
+    else if(!val||String(val).trim()==='') return false;
+  }
+  return true;
+}
+
+/* ---- Field renderers ---- */
+function renderField(f){
+  var val = state.data[f.id];
+  var subtitle = f.subtitle ? '<div style="font-size:13px;color:var(--ink-soft);margin-bottom:8px;">'+esc(f.subtitle)+'</div>' : '';
+  var optLabel = f.required ? '' : ' <span class="opt">(optional)</span>';
+
+  if(f.type==='text'||f.type==='email'){
+    return '<div class="field"><label class="field-label" for="'+f.id+'">'+esc(f.label)+optLabel+'</label>'+subtitle+'<input type="'+f.type+'" id="'+f.id+'" value="'+esc(val||'')+'" data-fid="'+f.id+'"/></div>';
+  }
+  if(f.type==='textarea'){
+    return '<div class="field"><label class="field-label" for="'+f.id+'">'+esc(f.label)+optLabel+'</label>'+subtitle+'<textarea id="'+f.id+'" data-fid="'+f.id+'">'+esc(val||'')+'</textarea></div>';
+  }
+  if(f.type==='select'){
+    var opts=f.options.map(function(o){return'<option value="'+esc(o)+'" '+(val===o?'selected':'')+'>'+esc(o)+'</option>';}).join('');
+    return '<div class="field"><label class="field-label" for="'+f.id+'">'+esc(f.label)+optLabel+'</label>'+subtitle+'<select id="'+f.id+'" data-fid="'+f.id+'"><option value="">Select one…</option>'+opts+'</select></div>';
+  }
+  if(f.type==='radio'){
+    var items=f.options.map(function(o,i){
+      var checked=(val===o)?'checked':'';
+      return '<div class="opt-item"><input type="radio" name="'+f.id+'" id="'+f.id+'_'+i+'" value="'+esc(o)+'" '+checked+' data-fid="'+f.id+'"/><label for="'+f.id+'_'+i+'"><span class="check"></span>'+esc(o)+'</label></div>';
+    }).join('');
+    return '<div class="field"><div class="field-label">'+esc(f.label)+optLabel+'</div>'+subtitle+'<div class="options-grid">'+items+'</div></div>';
+  }
+  if(f.type==='checkbox'){
+    var arr=val||[];
+    var items=f.options.map(function(o,i){
+      var checked=(arr.indexOf(o)>-1)?'checked':'';
+      return '<div class="opt-item"><input type="checkbox" name="'+f.id+'" id="'+f.id+'_'+i+'" value="'+esc(o)+'" '+checked+' data-fid="'+f.id+'" data-multi="true"/><label for="'+f.id+'_'+i+'"><span class="check"></span>'+esc(o)+'</label></div>';
+    }).join('');
+    return '<div class="field"><div class="field-label">'+esc(f.label)+optLabel+'</div>'+subtitle+'<div class="options-grid two-col">'+items+'</div></div>';
+  }
+  if(f.type==='scale'){
+    var n=f.max-f.min+1;
+    var nums=[];
+    for(var i=f.min;i<=f.max;i++){
+      var checked=(String(val)===String(i))?'checked':'';
+      nums.push('<div class="scale-opt"><input type="radio" name="'+f.id+'" id="'+f.id+'_'+i+'" value="'+i+'" '+checked+' data-fid="'+f.id+'"/><label for="'+f.id+'_'+i+'">'+i+'</label></div>');
+    }
+    return '<div class="field"><div class="field-label">'+esc(f.label)+optLabel+'</div>'+subtitle+'<div class="scale-wrap"><div class="scale-labels"><span>'+esc(f.minLabel)+'</span><span>'+esc(f.maxLabel)+'</span></div><div class="scale-opts">'+nums.join('')+'</div></div></div>';
+  }
+  return '';
+}
+
+/* ---- Screens ---- */
+function renderIntro(){
+  var dots=['#4F7A5B','#CC8A2E','#B85368','#2E6B72','#7A5C92'].map(function(c){return'<div class="ring-dot" style="background:'+c+'"></div>';}).join('');
+  el().innerHTML='<div class="wrap"><div class="intro-hero"><div class="eyebrow">NExT &middot; Partner Matching</div><div class="ring-dots">'+dots+'</div><h1>Find your accountability partner</h1><p class="lede">This survey helps us match you with the right growth partner across your Five Rings. There are no right or wrong answers — just honest ones. It takes about 8–10 minutes.</p><button class="btn btn-primary no-print" data-action="next">Let\'s get started &rarr;</button></div></div>';
+}
+
+function renderSection(){
+  var sec = currentSection();
+  if(sec.id==='intro'){renderIntro();return;}
+  if(sec.id==='confirm'){renderConfirm();return;}
+
+  var contentSections = SECTIONS.filter(function(s){return s.id!=='intro'&&s.id!=='confirm';});
+  var currentContentIdx = contentSections.findIndex(function(s){return s.id===sec.id;});
+  var total = contentSections.length;
+  var pct = Math.round((currentContentIdx/total)*100);
+
+  var fields = sec.fields.map(renderField).join('');
+  var isLast = state.sectionIndex === SECTIONS.length - 2;
+  var canContinue = validateSection(sec);
+
+  el().innerHTML=
+    '<div class="wrap">'+
+      '<div class="progress-wrap">'+
+        '<div class="progress-label"><span>'+esc(sec.title)+'</span><span>'+(currentContentIdx+1)+' of '+total+'</span></div>'+
+        '<div class="progress-track"><div class="progress-fill" style="width:'+(pct+Math.round(1/total*100))+'%"></div></div>'+
+      '</div>'+
+      '<div class="section-header"><h2>'+esc(sec.title)+'</h2><p>'+esc(sec.subtitle)+'</p></div>'+
+      '<div class="card">'+fields+'</div>'+
+      '<div class="nav-row">'+
+        '<button class="btn-ghost" data-action="prev">&larr; Back</button>'+
+        '<button class="btn btn-primary" data-action="next" '+(canContinue?'':'disabled')+'>'+(isLast?'Submit':'Continue')+(isLast?'':' &rarr;')+'</button>'+
+      '</div>'+
+    '</div>';
+
+  attachListeners();
+}
+
+function renderConfirm(){
+  el().innerHTML=
+    '<div class="wrap"><div class="confirm-hero">'+
+      '<div class="big-check">🌱</div>'+
+      '<h2>You\'re in!</h2>'+
+      '<p>Thank you for completing the partner matching survey. We\'ll review your responses and reach out with your match and next steps.</p>'+
+      '<p style="margin-top:16px;font-size:13px;color:var(--ink-soft);">'+(state.saveStatus==='saved'?'Your responses have been saved successfully.':state.saveStatus==='failed'?'Submission may not have saved — please email us if you don\'t hear back.':'')+'</p>'+
+    '</div></div>';
+}
+
+/* ---- Event binding ---- */
+function attachListeners(){
+  el().querySelectorAll('input[data-fid],select[data-fid],textarea[data-fid]').forEach(function(inp){
+    var fid=inp.getAttribute('data-fid');
+    var isMulti=inp.getAttribute('data-multi')==='true';
+    var evt=inp.tagName==='SELECT'||inp.type==='textarea'?'change':'change';
+    inp.addEventListener(evt,function(){
+      if(isMulti){
+        var arr=state.data[fid]||[];
+        if(inp.checked){if(arr.indexOf(inp.value)<0)arr.push(inp.value);}
+        else{arr=arr.filter(function(v){return v!==inp.value;});}
+        state.data[fid]=arr;
+      } else {
+        state.data[fid]=inp.value;
+      }
+      // Re-render to update button state without losing focus
+      var btn=el().querySelector('[data-action="next"]');
+      if(btn) btn.disabled=!validateSection(currentSection());
+    });
+    if(inp.tagName==='TEXTAREA'||inp.type==='text'||inp.type==='email'){
+      inp.addEventListener('input',function(){
+        state.data[fid]=inp.value;
+        var btn=el().querySelector('[data-action="next"]');
+        if(btn) btn.disabled=!validateSection(currentSection());
+      });
+    }
+  });
+}
+
+/* ---- Save ---- */
+function saveSubmission(){
+  if(!APPS_SCRIPT_URL||APPS_SCRIPT_URL==='YOUR_APPS_SCRIPT_URL_HERE'){state.saveStatus='saved';return;}
+  var payload=Object.assign({type:'matching',date:new Date().toISOString()},state.data);
+  fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify(payload)})
+    .then(function(){state.saveStatus='saved';renderConfirm();})
+    .catch(function(){state.saveStatus='failed';renderConfirm();});
+}
+
+/* ---- Navigation ---- */
+document.addEventListener('click',function(e){
+  var btn=e.target.closest('[data-action]');if(!btn)return;
+  var action=btn.getAttribute('data-action');
+  if(action==='next'){
+    if(state.sectionIndex<SECTIONS.length-1){
+      state.sectionIndex++;
+      scrollTop();
+      if(state.sectionIndex===SECTIONS.length-1){
+        saveSubmission();
+      }
+      renderSection();
+    }
+  } else if(action==='prev'){
+    if(state.sectionIndex>0){state.sectionIndex--;scrollTop();renderSection();}
+  }
+});
+
+// Array findIndex polyfill
+if(!Array.prototype.findIndex){Array.prototype.findIndex=function(fn){for(var i=0;i<this.length;i++){if(fn(this[i],i,this))return i;}return -1;};}
+
+renderSection();
+})();
+</script>
