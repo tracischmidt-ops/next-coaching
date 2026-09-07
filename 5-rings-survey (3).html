@@ -1,0 +1,312 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..600&family=Inter:wght@400;500;600;700&display=swap');
+:root{--bg:#FAF6EF;--card:#FFFFFF;--ink:#2B2620;--ink-soft:#756A5B;--line:#E6DCC6;--health:#4F7A5B;--joy:#CC8A2E;--love:#B85368;--wealth:#2E6B72;--curiosity:#7A5C92;--health-bg:#EAF1EB;--joy-bg:#FBF0DF;--love-bg:#F8E9EC;--wealth-bg:#E7F0F0;--curiosity-bg:#F0EAF4;--radius:18px;}
+*{box-sizing:border-box;}
+#rings5-root{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--bg);min-height:100vh;line-height:1.5;}
+#rings5-root h1,#rings5-root h2,#rings5-root h3,#rings5-root h4{font-family:'Fraunces',Georgia,serif;font-weight:600;margin:0;letter-spacing:-.01em;}
+#rings5-root .wrap{max-width:720px;margin:0 auto;padding:24px 20px 80px;}
+#rings5-root button{font-family:'Inter',sans-serif;cursor:pointer;border:none;background:none;}
+#rings5-root .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 28px;border-radius:999px;font-weight:700;font-size:16px;transition:transform .15s,opacity .15s;}
+#rings5-root .btn-primary{background:var(--ink);color:var(--bg);}
+#rings5-root .btn-primary:disabled{opacity:.35;cursor:not-allowed;}
+#rings5-root .btn-primary:not(:disabled):hover{transform:translateY(-1px);}
+#rings5-root .btn-full{width:100%;display:flex;}
+#rings5-root .btn-ghost{background:transparent;color:var(--ink-soft);text-decoration:underline;padding:8px 4px;font-size:14px;}
+#rings5-root .btn-ghost:hover{color:var(--ink);}
+#rings5-root .btn-secondary{background:transparent;border:1.5px solid var(--ink);color:var(--ink);}
+#rings5-root input[type=text],#rings5-root input[type=email]{width:100%;font-family:'Inter',sans-serif;font-size:16px;padding:13px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);}
+#rings5-root input:focus-visible{outline:2px solid var(--ink);outline-offset:1px;}
+#rings5-root label.field-label{display:block;font-size:13px;font-weight:600;color:var(--ink-soft);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em;}
+#rings5-root .eyebrow{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px;}
+#rings5-root .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:28px 26px;}
+/* Step indicator */
+#rings5-root .step-bar{background:var(--card);border-bottom:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:0;}
+#rings5-root .step-bar .step-num{background:var(--health);color:#fff;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex:none;}
+#rings5-root .step-bar .step-label{font-size:13px;font-weight:600;color:var(--ink);}
+#rings5-root .step-bar .step-of{font-size:12px;color:var(--ink-soft);}
+/* Progress */
+#rings5-root .progress-row{display:flex;gap:6px;margin-bottom:26px;}
+#rings5-root .progress-seg{flex:1;height:6px;border-radius:999px;background:var(--line);overflow:hidden;}
+#rings5-root .progress-seg .fill{height:100%;border-radius:999px;transition:width .3s ease;}
+/* Sticky scale */
+#rings5-root .scale-legend-bar{position:sticky;top:0;z-index:20;background:var(--card);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:center;padding:10px 16px;margin:0 -26px 2px;border-radius:var(--radius) var(--radius) 0 0;}
+#rings5-root .scale-legend-bar .leg-end{font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.03em;flex:0 0 70px;line-height:1.3;}
+#rings5-root .scale-legend-bar .leg-end.right{text-align:right;}
+#rings5-root .scale-legend-bar .leg-nums{display:flex;gap:8px;flex:1;justify-content:center;}
+#rings5-root .scale-legend-bar .leg-n{width:40px;height:28px;border-radius:8px;background:var(--bg);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--ink-soft);}
+/* Questions */
+#rings5-root .ring-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px;}
+#rings5-root .ring-header h2{font-size:24px;}
+#rings5-root .ring-count{font-size:13px;color:var(--ink-soft);font-weight:600;}
+#rings5-root .ring-subtitle{color:var(--ink-soft);font-size:14px;margin-bottom:18px;}
+#rings5-root .q-block{padding:16px 0;border-bottom:1px solid var(--line);}
+#rings5-root .q-block:last-child{border-bottom:none;}
+#rings5-root .q-text{font-size:15px;margin-bottom:12px;font-weight:500;}
+#rings5-root .scale-opts{display:flex;gap:8px;justify-content:center;}
+#rings5-root .scale-opt{position:relative;}
+#rings5-root .scale-opt input{position:absolute;opacity:0;width:40px;height:40px;cursor:pointer;margin:0;left:0;top:0;}
+#rings5-root .scale-opt .dial{width:40px;height:40px;border-radius:50%;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:var(--ink-soft);transition:all .15s;background:var(--card);}
+#rings5-root .scale-opt input:checked+.dial{color:#fff;border-color:transparent;}
+#rings5-root .nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:28px;}
+/* Results */
+#rings5-root .results-hero{text-align:center;margin-bottom:8px;}
+#rings5-root .overall-score{font-family:'Fraunces',serif;font-size:54px;font-weight:600;}
+#rings5-root .overall-label{color:var(--ink-soft);font-size:14px;margin-top:-6px;}
+#rings5-root .ring-result-row{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--line);}
+#rings5-root .ring-result-row:last-child{border-bottom:none;}
+#rings5-root .ring-result-bar-wrap{flex:1;}
+#rings5-root .ring-result-top{display:flex;justify-content:space-between;font-size:14px;margin-bottom:6px;}
+#rings5-root .ring-result-top .rname{font-weight:700;}
+#rings5-root .ring-result-track{height:9px;border-radius:999px;background:var(--line);overflow:hidden;}
+#rings5-root .ring-result-track .fill{height:100%;border-radius:999px;transition:width 1s cubic-bezier(.16,1,.3,1);width:0%;}
+#rings5-root .swatch{width:14px;height:14px;border-radius:50%;flex:none;}
+#rings5-root .gap-note{font-size:13px;color:var(--ink-soft);margin-top:5px;font-style:italic;}
+#rings5-root .insight-card{border-radius:var(--radius);padding:22px 24px;margin-top:22px;}
+#rings5-root .insight-card p{font-size:15px;margin:0;}
+#rings5-root .next-step-card{background:var(--card);border:2px solid var(--ink);border-radius:var(--radius);padding:24px 26px;margin-top:24px;text-align:center;}
+#rings5-root .next-step-card h3{font-size:20px;margin-bottom:8px;}
+#rings5-root .next-step-card p{font-size:14px;color:var(--ink-soft);margin-bottom:18px;}
+/* Feedback form */
+#rings5-root .fb-field{margin-bottom:22px;}
+#rings5-root .fb-label{font-size:15px;font-weight:600;margin-bottom:10px;display:block;}
+#rings5-root .fb-sub{font-size:13px;color:var(--ink-soft);margin-bottom:10px;}
+#rings5-root .fb-scale{display:flex;gap:8px;}
+#rings5-root .fb-scale-opt{position:relative;flex:1;}
+#rings5-root .fb-scale-opt input{position:absolute;opacity:0;width:100%;height:100%;cursor:pointer;left:0;top:0;}
+#rings5-root .fb-scale-opt label{display:flex;align-items:center;justify-content:center;height:44px;border:1.5px solid var(--line);border-radius:10px;font-size:14px;font-weight:700;color:var(--ink-soft);cursor:pointer;transition:all .15s;background:var(--card);}
+#rings5-root .fb-scale-opt input:checked+label{background:var(--accent);border-color:var(--accent);color:#fff;}
+#rings5-root .fb-scale-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--ink-soft);margin-top:6px;text-transform:uppercase;letter-spacing:.03em;}
+#rings5-root textarea.fb-text{width:100%;font-family:'Inter',sans-serif;font-size:14px;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);resize:vertical;min-height:72px;}
+#rings5-root textarea.fb-text:focus-visible{outline:2px solid var(--ink);outline-offset:1px;}
+/* Resume screen */
+#rings5-root .resume-card{text-align:center;padding:40px 30px;}
+#rings5-root .resume-card h2{font-size:26px;margin-bottom:12px;}
+#rings5-root .resume-card p{font-size:15px;color:var(--ink-soft);margin-bottom:28px;}
+#rings5-root .resume-btns{display:flex;flex-direction:column;gap:12px;}
+/* Transition screen */
+#rings5-root .transition-card{text-align:center;padding:40px 26px;}
+#rings5-root .transition-card .big-num{font-size:64px;margin-bottom:12px;}
+#rings5-root .transition-card h2{font-size:26px;margin-bottom:10px;}
+#rings5-root .transition-card p{font-size:15px;color:var(--ink-soft);margin-bottom:28px;max-width:420px;margin-left:auto;margin-right:auto;}
+#rings5-root .actions-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px;justify-content:center;}
+#rings5-root .footer-note{text-align:center;margin-top:16px;font-size:13px;color:var(--ink-soft);}
+#rings5-root .history-section{margin-top:28px;}
+@media(max-width:520px){#rings5-root .scale-legend-bar .leg-end{display:none;}#rings5-root .overall-score{font-size:44px;}}
+@media print{#rings5-root .no-print{display:none!important;}#rings5-root{background:#fff;}}
+</style>
+
+<div id="rings5-root">
+  <div id="rings5-step-bar" style="display:none;" class="step-bar">
+    <div class="step-num">1</div>
+    <div class="step-label">Discover Your Balance Rings</div>
+    <div class="step-of">&nbsp;&middot;&nbsp; Step 1 of 3</div>
+  </div>
+  <div id="rings5-app"></div>
+</div>
+
+<script>
+(function(){
+
+var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzemUS1rTRPOZDiLZ9A2XdNR7gMxLkFPFTYkEsSO1XXUTyFd93OLpTCKXkTLd8D7dswcg/exec';
+var SHEET_URL = 'https://docs.google.com/spreadsheets/d/13o0mJVED71zeQZDwt2Vv3lMDxRCdS9LYO2Odnjkxlm4/edit?gid=0#gid=0';
+
+var RINGS=[
+  {key:'health',name:'Health',subtitle:'Physical, preventive, nutritional, sleep, and stress well-being.',color:'var(--health)',hex:'#4F7A5B',bg:'var(--health-bg)',
+   questions:['A 30-minute walk feels easy and comfortable for me.','I engage in physical activity at least 3\u20135 times per week.','I maintain consistent energy levels throughout most days.','I get enough restful sleep most nights.','My diet supports my energy and overall well-being.','I feel good about my alcohol consumption habits.','I avoid or manage substance use responsibly.','I am up to date on annual medical checkups and preventive care.','I\'ve had bloodwork or relevant tests in the past 12 months.','I manage stress effectively most of the time.','I make time for relaxation and self-care.','I take prescribed medications or supplements as recommended.','I feel strong, mobile, and capable in my body.','I listen to my body and respond to signs of fatigue or imbalance.','Overall, I feel physically and mentally healthy.'],
+   lowPrompt:'Health is asking for attention. What is one small, doable thing this week that would support your body or your rest?'},
+  {key:'joy',name:'Joy',subtitle:'Joy, leisure, creativity, and restorative experiences.',color:'var(--joy)',hex:'#CC8A2E',bg:'var(--joy-bg)',
+   questions:['I regularly do activities purely for fun or enjoyment.','I make time for hobbies and creative outlets.','I schedule breaks, vacations, or downtime without guilt.','I have experiences that make me laugh or feel joyful.','I find beauty in everyday moments.','I regularly spend time outdoors or in nature.','I create or enjoy art, music, food, or other sensory pleasures.','I feel I deserve to experience happiness.','I express gratitude for simple pleasures in life.','I treat myself with kindness and allow joy into my routine.','I share joyful experiences with others.','I feel a sense of purpose or meaning in the things I enjoy.','I balance work, responsibilities, and leisure time effectively.','I do small things that make the world around me a little better.','Overall, I feel a healthy amount of joy and satisfaction in my life.'],
+   lowPrompt:'Joy is running low. What is one small, guilt-free pleasure you could let yourself have in the next 7 days?'},
+  {key:'love',name:'Love',subtitle:'Connection, relationships, compassion, and emotional security.',color:'var(--love)',hex:'#B85368',bg:'var(--love-bg)',
+   questions:['I feel loved and supported by people in my life.','I express love and appreciation to others regularly.','I have close relationships built on trust and care.','I feel connected to my family or chosen family.','I maintain meaningful friendships.','I show compassion toward others.','I communicate openly and honestly in relationships.','I forgive easily and let go of resentment.','I feel comfortable receiving love and kindness from others.','I make time for people who matter to me.','I love myself and treat myself with respect.','I practice empathy and understanding in my relationships.','I support others in their goals and growth.','I feel emotionally secure and grounded in my relationships.','Overall, I experience love in my daily life.'],
+   lowPrompt:'Love and connection are asking for attention. Who is one person you could reach out to this week?'},
+  {key:'wealth',name:'Wealth',subtitle:'Financial stability, literacy, alignment, and future planning.',color:'var(--wealth)',hex:'#2E6B72',bg:'var(--wealth-bg)',
+   questions:['I can comfortably pay my regular bills and expenses.','I have savings or financial security for unexpected costs.','I feel financially stable.','I earn enough to live the lifestyle I want.','I can occasionally splurge or spend on things I enjoy.','I am confident managing my finances.','I live within my means without significant financial stress.','I am making progress toward my financial goals.','I give or contribute to causes or people I care about.','I plan ahead for future expenses or investments.','I spend money in alignment with my values.','I have a healthy relationship with money (neither anxious nor avoidant).','I am learning or improving my financial literacy.','I feel optimistic about my financial future.','Overall, I feel secure and content with my financial situation.'],
+   lowPrompt:'Wealth is asking for attention. What is one small step toward clarity you could take this week?'},
+  {key:'curiosity',name:'Curiosity',subtitle:'Learning, novelty, deep focus, and intellectual engagement.',color:'var(--curiosity)',hex:'#7A5C92',bg:'var(--curiosity-bg)',
+   questions:['I regularly read, listen, or watch things that make me think.','I enjoy learning new skills or exploring new topics.','I ask questions and seek to understand how things work.','I spend time on hobbies that engage my mind.','I feel intellectually stimulated by my work or daily activities.','I challenge my own perspectives or assumptions.','I enjoy healthy debates or discussions.','I try new things even when they\'re outside my comfort zone.','I make time for creative or imaginative thinking.','I keep up with topics or ideas that interest me.','I feel inspired to grow mentally and emotionally.','I can focus deeply when something captures my attention.','I enjoy sharing what I learn with others.','I feel satisfied with how often I engage my curiosity.','Overall, I feel mentally active, interested, and open to new experiences.'],
+   lowPrompt:'Curiosity is asking for attention. What is one small, low-stakes thing you could learn or try this week?'}
+];
+
+var tid = localStorage.getItem('next-tid') || ('T'+Date.now().toString(36).toUpperCase());
+localStorage.setItem('next-tid', tid);
+
+var SAVE_KEY = 'next-annual-' + tid;
+
+var state = {
+  screen:'info', ringIndex:0,
+  info:{firstName:'',lastName:'',email:''},
+  answers:{}, results:null, history:null, saveStatus:'',
+  feedback:{ease:'',confusing:'',accurate:'',accurateNote:'',missing:'',changes:''},
+  fbSaved:false
+};
+
+function el(){ return document.getElementById('rings5-app'); }
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function scrollTop(){ window.scrollTo({top:0,behavior:'smooth'}); }
+function showStepBar(show){ var b=document.getElementById('rings5-step-bar'); if(b) b.style.display=show?'flex':'none'; }
+
+/* ---- Save / Resume ---- */
+function saveProgress(){
+  localStorage.setItem(SAVE_KEY, JSON.stringify({ringIndex:state.ringIndex, answers:state.answers, info:state.info, screen:'survey'}));
+}
+function clearProgress(){ localStorage.removeItem(SAVE_KEY); }
+function getSaved(){ try{ return JSON.parse(localStorage.getItem(SAVE_KEY)); } catch(e){ return null; } }
+
+/* ---- Radar SVG ---- */
+function radarSVG(scoresMap, prevScoresMap, avgKey){
+  var cx=150,cy=155,n=RINGS.length,maxR=105,step=2*Math.PI/n;
+  function pt(i,v){var a=i*step-Math.PI/2;var r=(v/5)*maxR;return[cx+r*Math.cos(a),cy+r*Math.sin(a)];}
+  var grid='';
+  [1,2,3,4,5].forEach(function(l){var pts=RINGS.map(function(_,i){return pt(i,l);});var d=pts.map(function(p,i){return(i===0?'M':'L')+p[0].toFixed(1)+' '+p[1].toFixed(1);}).join(' ')+'Z';grid+='<path d="'+d+'" stroke="#E6DCC6" stroke-width="1" fill="none" opacity="'+(l===5?.9:.5)+'"/>';var lp=pt(0,l);grid+='<text x="'+(lp[0]+4).toFixed(1)+'" y="'+lp[1].toFixed(1)+'" font-size="9" fill="#756A5B" font-family="Inter,sans-serif">'+l+'</text>';});
+  var axes='';RINGS.forEach(function(ring,i){var ep=pt(i,5);axes+='<line x1="'+cx+'" y1="'+cy+'" x2="'+ep[0].toFixed(1)+'" y2="'+ep[1].toFixed(1)+'" stroke="#E6DCC6" stroke-width="1.5"/>';var lp=pt(i,5.75);var anchor=lp[0]<cx-4?'end':lp[0]>cx+4?'start':'middle';axes+='<text x="'+lp[0].toFixed(1)+'" y="'+(lp[1]+4).toFixed(1)+'" font-size="11" font-weight="700" fill="'+ring.hex+'" font-family="Fraunces,Georgia,serif" text-anchor="'+anchor+'">'+ring.name+'</text>';});
+  function polygon(sc,opacity,strokeColor,fill){if(!sc)return'';var pts=RINGS.map(function(r,i){return pt(i,sc[r.key][avgKey||'ringAvg']);});var d=pts.map(function(p,i){return(i===0?'M':'L')+p[0].toFixed(1)+' '+p[1].toFixed(1);}).join(' ')+'Z';var dots=pts.map(function(p,i){return'<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="5" fill="'+RINGS[i].hex+'" opacity="'+opacity+'"/>';}).join('');return'<path d="'+d+'" stroke="'+strokeColor+'" stroke-width="2.5" fill="'+fill+'" opacity="'+opacity+'"/>'+dots;}
+  var prev=prevScoresMap?polygon(prevScoresMap,.35,'#aaa','rgba(180,180,180,0.07)'):'';
+  var curr=scoresMap?'<g>'+polygon(scoresMap,.92,'#2B2620','rgba(43,38,32,0.06)')+'</g>':'';
+  return'<svg viewBox="0 0 300 320" width="100%" style="max-width:300px;display:block;margin:0 auto;">'+grid+axes+prev+curr+'</svg>';
+}
+
+/* ---- Resume screen ---- */
+function renderResume(saved){
+  showStepBar(true);
+  el().innerHTML='<div class="wrap"><div class="card resume-card"><h2>Welcome back!</h2><p>You have a survey in progress. Would you like to continue where you left off, or start fresh?</p><div class="resume-btns"><button class="btn btn-primary btn-full" data-action="resume-yes">Continue where I left off &rarr;</button><button class="btn-ghost" data-action="resume-no">Start fresh</button></div></div></div>';
+}
+
+/* ---- Info screen ---- */
+function renderInfo(){
+  showStepBar(true);
+  var i=state.info;var valid=i.firstName.trim()&&i.lastName.trim()&&/\S+@\S+\.\S+/.test(i.email);
+  el().innerHTML='<div class="wrap"><div class="eyebrow" style="text-align:center;margin-bottom:16px;">Annual Balance Survey</div><h2 style="font-size:22px;margin-bottom:20px;text-align:center;">A little about you</h2><div class="card" style="display:flex;flex-direction:column;gap:16px;"><div><label class="field-label">First name</label><input type="text" id="f-first" value="'+esc(i.firstName)+'" placeholder="First name"/></div><div><label class="field-label">Last name</label><input type="text" id="f-last" value="'+esc(i.lastName)+'" placeholder="Last name"/></div><div><label class="field-label">Email</label><input type="email" id="f-email" value="'+esc(i.email)+'" placeholder="you@email.com"/></div></div><div class="nav-row"><a class="btn-ghost" href="index.html">&larr; Welcome page</a><button class="btn btn-primary" data-action="start-survey" '+(valid?'':'disabled')+'>Start &rarr;</button></div></div>';
+  ['f-first','f-last','f-email'].forEach(function(id){var node=document.getElementById(id);if(node){node.addEventListener('input',function(e){var map={'f-first':'firstName','f-last':'lastName','f-email':'email'};state.info[map[id]]=e.target.value;var btn=el().querySelector('[data-action="start-survey"]');if(btn)btn.disabled=!(state.info.firstName.trim()&&state.info.lastName.trim()&&/\S+@\S+\.\S+/.test(state.info.email));});}});
+}
+
+/* ---- Survey ---- */
+function renderSurvey(){
+  showStepBar(true);
+  var ring=RINGS[state.ringIndex];
+  var answered=ring.questions.filter(function(_,idx){return state.answers[ring.key+'_'+idx]!==undefined;}).length;
+  var progress=RINGS.map(function(r,idx){var isPast=idx<state.ringIndex,isCurrent=idx===state.ringIndex;var w=isPast?'100%':(isCurrent?(answered/15*100)+'%':'0%');return'<div class="progress-seg"><div class="fill" style="width:'+w+';background:'+r.color+'"></div></div>';}).join('');
+  var scale='<div class="scale-legend-bar"><span class="leg-end">Strongly<br>Disagree</span><div class="leg-nums">'+[1,2,3,4,5].map(function(n){return'<div class="leg-n">'+n+'</div>';}).join('')+'</div><span class="leg-end right">Strongly<br>Agree</span></div>';
+  var blocks=ring.questions.map(function(q,idx){var qid=ring.key+'_'+idx;var val=state.answers[qid];var opts=[1,2,3,4,5].map(function(n){var checked=val===n?'checked':'';var ds=val===n?'background:'+ring.color+';border-color:'+ring.color+';transform:scale(1.06);color:#fff;':'';return'<label class="scale-opt"><input type="radio" name="'+qid+'" value="'+n+'" '+checked+' data-qid="'+qid+'"/><span class="dial" style="'+ds+'">'+n+'</span></label>';}).join('');return'<div class="q-block"><div class="q-text">'+(idx+1)+'. '+esc(q)+'</div><div class="scale-opts">'+opts+'</div></div>';}).join('');
+  var isLast=state.ringIndex===RINGS.length-1;var canContinue=answered===15;
+  el().innerHTML='<div class="wrap"><div class="progress-row">'+progress+'</div><div class="ring-header"><h2 style="color:'+ring.color+'">'+ring.name+'</h2><span class="ring-count">'+answered+' / 15 answered</span></div><div class="ring-subtitle">'+ring.subtitle+'</div><div class="card" style="padding:0 22px 16px;">'+scale+blocks+'</div><div class="nav-row"><button class="btn-ghost" data-action="prev-ring">&larr; '+(state.ringIndex===0?'Back':'Previous ring')+'</button><button class="btn btn-primary" data-action="next-ring" '+(canContinue?'':'disabled')+'>'+(isLast?'See my results':'Continue to '+RINGS[state.ringIndex+1].name)+' &rarr;</button></div></div>';
+  el().querySelectorAll('input[type=radio]').forEach(function(inp){inp.addEventListener('change',function(e){state.answers[e.target.getAttribute('data-qid')]=parseInt(e.target.value,10);saveProgress();var btn=el().querySelector('[data-action="next-ring"]');var ring2=RINGS[state.ringIndex];var ans=ring2.questions.filter(function(_,idx){return state.answers[ring2.key+'_'+idx]!==undefined;}).length;if(btn)btn.disabled=ans!==15;});});
+}
+
+/* ---- Compute ---- */
+function computeResults(){
+  var scores={};
+  RINGS.forEach(function(ring){var vals=ring.questions.map(function(_,idx){return state.answers[ring.key+'_'+idx];});var facetAvg=vals.slice(0,14).reduce(function(a,b){return a+b;},0)/14;var ringAvg=vals.reduce(function(a,b){return a+b;},0)/15;scores[ring.key]={facetAvg:facetAvg,capstone:vals[14],ringAvg:ringAvg};});
+  var overall=RINGS.reduce(function(s,r){return s+scores[r.key].ringAvg;},0)/RINGS.length;
+  var lowestKey=RINGS.slice().sort(function(a,b){return scores[a.key].ringAvg-scores[b.key].ringAvg;})[0].key;
+  return{scores:scores,overall:overall,lowestKey:lowestKey};
+}
+
+function saveSubmission(results){
+  loadHistory();
+  var histKey='annual-history:'+state.info.email.toLowerCase().trim();
+  var hist=state.history||[];
+  hist.unshift({date:new Date().toISOString(),overall:results.overall,scores:results.scores});
+  if(hist.length>10)hist=hist.slice(0,10);
+  localStorage.setItem(histKey,JSON.stringify(hist));
+  state.history=hist;
+  localStorage.setItem('next-firstName', state.info.firstName);
+  localStorage.setItem('next-lastName', state.info.lastName);
+  localStorage.setItem('next-email', state.info.email);
+  clearProgress();
+  if(APPS_SCRIPT_URL&&APPS_SCRIPT_URL!=='YOUR_APPS_SCRIPT_URL_HERE'){
+    fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify({type:'annual',tid:tid,firstName:state.info.firstName,lastName:state.info.lastName,email:state.info.email,date:new Date().toISOString(),overall:results.overall,scores:results.scores,answers:state.answers})})
+    .then(function(){state.saveStatus='saved';})
+    .catch(function(){state.saveStatus='local';});
+  } else { state.saveStatus='local'; }
+}
+
+function loadHistory(){
+  var histKey='annual-history:'+state.info.email.toLowerCase().trim();
+  try{state.history=JSON.parse(localStorage.getItem(histKey))||[];}catch(e){state.history=[];}
+}
+
+function historyHTML(history){
+  if(!history||history.length<2)return'';
+  var recent=history.slice(0,6).reverse();
+  var cols=recent.map(function(entry){var dateStr=new Date(entry.date).toLocaleDateString('en-US',{month:'short',year:'2-digit'});var bars=RINGS.map(function(ring){var pct=(entry.scores[ring.key].ringAvg/5*100).toFixed(0);return'<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;"><div style="width:100%;background:var(--line);border-radius:4px;height:40px;display:flex;align-items:flex-end;overflow:hidden;"><div style="width:100%;height:'+pct+'%;background:'+ring.hex+';border-radius:4px 4px 0 0;"></div></div><span style="font-size:9px;color:var(--ink-soft);">'+ring.name.slice(0,3)+'</span></div>';}).join('');return'<div style="flex:1;display:flex;flex-direction:column;gap:6px;"><div style="display:flex;gap:3px;align-items:flex-end;">'+bars+'</div><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--ink-soft);"><span>'+dateStr+'</span><span style="font-weight:700;color:var(--ink);">'+entry.overall.toFixed(1)+'</span></div></div>';}).join('<div style="width:1px;background:var(--line);margin:0 4px;"></div>');
+  return'<div class="card history-section"><h3 style="font-size:17px;margin-bottom:12px;">Your history</h3><div style="display:flex;gap:0;align-items:stretch;">'+cols+'</div></div>';
+}
+
+/* ---- Results ---- */
+function renderResults(){
+  showStepBar(true);
+  var r=state.results;
+  var prevScores=(state.history&&state.history.length>1)?state.history[1].scores:null;
+  var rows=RINGS.map(function(ring){var s=r.scores[ring.key];var pct=(s.ringAvg/5*100).toFixed(0);var gap=Math.abs(s.facetAvg-s.capstone);var gapNote=gap>=1.3?(s.capstone<s.facetAvg?'Your day-to-day answers in '+ring.name+' run stronger than how you rated it overall.':'You rated '+ring.name+' overall higher than the day-to-day answers suggest.'):'';return'<div class="ring-result-row"><span class="swatch" style="background:'+ring.color+'"></span><div class="ring-result-bar-wrap"><div class="ring-result-top"><span class="rname">'+ring.name+'</span><span>'+s.ringAvg.toFixed(1)+' / 5</span></div><div class="ring-result-track"><div class="fill" style="width:'+pct+'%;background:'+ring.color+'"></div></div>'+(gapNote?'<div class="gap-note">'+gapNote+'</div>':'')+'</div></div>';}).join('');
+  var lowRing=RINGS.filter(function(r2){return r2.key===r.lowestKey;})[0];
+  el().innerHTML='<div class="wrap"><div class="results-hero">'+radarSVG(r.scores,prevScores,'ringAvg')+'<div class="overall-score" style="margin-top:10px;">'+r.overall.toFixed(1)+'</div><div class="overall-label">overall, out of 5</div></div><div class="card" style="margin-top:24px;">'+rows+'</div><div class="insight-card" style="background:'+lowRing.bg+';"><div class="eyebrow" style="color:'+lowRing.color+'">Where to focus</div><p>'+lowRing.lowPrompt+'</p></div>'+historyHTML(state.history)+'<div class="next-step-card no-print"><h3>Before you continue&hellip;</h3><p>Please take a moment to share your feedback about the Annual Balance Survey. It only takes a minute and helps us improve the experience.</p><button class="btn btn-primary btn-full" data-action="go-feedback">Step 2 of 3: Share your feedback &rarr;</button></div><div class="actions-row no-print"><button class="btn btn-secondary" data-action="print">Print / Save as PDF</button></div></div>';
+}
+
+/* ---- Feedback ---- */
+function renderFeedback(){
+  showStepBar(false);
+  var fb=state.feedback;
+  var easeOpts=[1,2,3,4,5].map(function(n){return'<div class="fb-scale-opt"><input type="radio" name="fb-ease" id="fb-ease-'+n+'" value="'+n+'" '+(fb.ease==n?'checked':'')+' data-fb="ease"/><label for="fb-ease-'+n+'">'+n+'</label></div>';}).join('');
+  var accOpts=[1,2,3,4,5].map(function(n){return'<div class="fb-scale-opt"><input type="radio" name="fb-acc" id="fb-acc-'+n+'" value="'+n+'" '+(fb.accurate==n?'checked':'')+' data-fb="accurate"/><label for="fb-acc-'+n+'">'+n+'</label></div>';}).join('');
+  var canSubmit=fb.ease&&fb.accurate;
+  el().innerHTML='<div class="wrap"><div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;"><div style="width:28px;height:28px;border-radius:50%;background:var(--joy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex:none;">2</div><div><div style="font-weight:700;font-size:17px;">Help Us Improve</div><div style="font-size:12px;color:var(--ink-soft);">Step 2 of 3</div></div></div><div class="card"><div class="fb-field"><label class="fb-label">1. How easy was the Annual Balance Survey to complete?</label><div style="display:flex;gap:8px;" class="fb-scale">'+easeOpts+'</div><div class="fb-scale-labels"><span>Very difficult</span><span>Very easy</span></div></div><div class="fb-field"><label class="fb-label">2. Were any questions confusing or difficult to answer? <span style="font-weight:400;color:var(--ink-soft);font-size:13px;">(optional)</span></label><textarea class="fb-text" data-fb="confusing" placeholder="Share any questions that gave you pause\u2026">'+esc(fb.confusing)+'</textarea></div><div class="fb-field"><label class="fb-label">3. Did your results feel accurate and useful?</label><div style="display:flex;gap:8px;" class="fb-scale">'+accOpts+'</div><div class="fb-scale-labels"><span>Not at all</span><span>Very much so</span></div></div><div class="fb-field"><label class="fb-label">4. Any thoughts on your results? <span style="font-weight:400;color:var(--ink-soft);font-size:13px;">(optional)</span></label><textarea class="fb-text" data-fb="accurateNote" placeholder="What felt right or off\u2026">'+esc(fb.accurateNote)+'</textarea></div><div class="fb-field"><label class="fb-label">5. Was there anything you expected to see that was missing? <span style="font-weight:400;color:var(--ink-soft);font-size:13px;">(optional)</span></label><textarea class="fb-text" data-fb="missing" placeholder="Missing questions, topics, or features\u2026">'+esc(fb.missing)+'</textarea></div><div class="fb-field" style="margin-bottom:0;"><label class="fb-label">6. Is there anything else you would change about the experience? <span style="font-weight:400;color:var(--ink-soft);font-size:13px;">(optional)</span></label><textarea class="fb-text" data-fb="changes" placeholder="Any other thoughts\u2026">'+esc(fb.changes)+'</textarea></div></div><div class="nav-row"><button class="btn-ghost" data-action="go-results">&larr; Back to results</button><button class="btn btn-primary" data-action="submit-feedback" '+(canSubmit?'':'disabled')+'>Next: Find Your Accountability Partner &rarr;</button></div></div>';
+  el().querySelectorAll('[data-fb]').forEach(function(inp){inp.addEventListener(inp.tagName==='TEXTAREA'?'input':'change',function(e){state.feedback[e.target.getAttribute('data-fb')]=inp.type==='radio'?parseInt(e.target.value,10):e.target.value;var btn=el().querySelector('[data-action="submit-feedback"]');if(btn)btn.disabled=!(state.feedback.ease&&state.feedback.accurate);});});
+}
+
+function saveFeedback(){
+  if(APPS_SCRIPT_URL&&APPS_SCRIPT_URL!=='YOUR_APPS_SCRIPT_URL_HERE'){
+    fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify({type:'annual-feedback',tid:tid,name:state.info.firstName+' '+state.info.lastName,email:state.info.email,date:new Date().toISOString(),ease:state.feedback.ease,confusing:state.feedback.confusing,accurate:state.feedback.accurate,accurateNote:state.feedback.accurateNote,missing:state.feedback.missing,changes:state.feedback.changes})}).catch(function(){});
+  }
+  state.fbSaved=true;
+}
+
+/* ---- Transition to matching ---- */
+function renderTransition(){
+  showStepBar(false);
+  var matchUrl='partner-matching-survey.html';
+  el().innerHTML='<div class="wrap"><div class="card transition-card"><div class="big-num">\uD83C\uDF1F</div><h2>Nice work!</h2><p>Your Balance Ring results have been saved. Now let\u2019s move to the final step \u2014 the Accountability Partner Matching Survey. This helps us test whether we can connect you with a compatible growth partner.</p><p style="font-size:13px;color:var(--ink-soft);margin-top:12px;">Don\u2019t worry \u2014 we won\u2019t be making any official matches right now, just testing the concept.</p><a href="'+matchUrl+'" class="btn btn-primary btn-full" style="text-decoration:none;margin-top:24px;display:flex;">Step 3 of 3: Find Your Accountability Partner &rarr;</a></div></div>';
+}
+
+/* ---- Router ---- */
+function render(){
+  if(state.screen==='resume') renderResume();
+  else if(state.screen==='info') renderInfo();
+  else if(state.screen==='survey') renderSurvey();
+  else if(state.screen==='results') renderResults();
+  else if(state.screen==='feedback') renderFeedback();
+  else if(state.screen==='transition') renderTransition();
+}
+
+/* ---- Events ---- */
+document.addEventListener('click',function(e){
+  var btn=e.target.closest('[data-action]');if(!btn)return;
+  var action=btn.getAttribute('data-action');
+  if(action==='resume-yes'){
+    var saved=getSaved();
+    if(saved){state.ringIndex=saved.ringIndex||0;state.answers=saved.answers||{};state.info=saved.info||state.info;}
+    state.screen='survey';scrollTop();render();
+  } else if(action==='resume-no'){clearProgress();state.screen='info';scrollTop();render();}
+  else if(action==='start-survey'){localStorage.setItem('next-firstName',state.info.firstName);localStorage.setItem('next-lastName',state.info.lastName);localStorage.setItem('next-email',state.info.email);state.screen='survey';state.ringIndex=0;scrollTop();render();}
+  else if(action==='prev-ring'){if(state.ringIndex===0){state.screen='info';}else{state.ringIndex--;}scrollTop();render();}
+  else if(action==='next-ring'){
+    if(state.ringIndex<RINGS.length-1){state.ringIndex++;scrollTop();render();}
+    else{state.results=computeResults();saveSubmission(state.results);state.screen='results';scrollTop();render();}
+  }
+  else if(action==='go-feedback'){state.screen='feedback';scrollTop();render();}
+  else if(action==='go-results'){state.screen='results';scrollTop();render();}
+  else if(action==='submit-feedback'){saveFeedback();state.screen='transition';scrollTop();render();}
+  else if(action==='print'){window.print();}
+});
+
+/* ---- Init ---- */
+var saved=getSaved();
+if(saved&&Object.keys(saved.answers||{}).length>0){
+  state.ringIndex=saved.ringIndex||0;state.answers=saved.answers;state.info=saved.info||state.info;
+  state.screen='resume';
+} else {
+  state.screen='info';
+}
+render();
+})();
+</script>
