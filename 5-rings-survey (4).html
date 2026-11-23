@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Treia — Five Rings Annual Reflection</title>
+<link rel="stylesheet" href="treia.css">
+</head>
+<body>
+<div id="stepbar" class="step-bar no-print"><div class="num" style="background:var(--health)">1</div><div class="label">Five Rings Annual Reflection</div><div class="of">&middot; Step 1 of 3</div></div>
+<div id="app"></div>
+<script src="treia-common.js"></script>
+<script>
+(function(){
+var T=TREIA, R=T.RINGS, esc=T.esc;
+
+/* ---------- Questions ----------
+   s: A = agree scale, F = frequency in the past month, C = count
+   r: true = reverse-scored (agreeing means the Ring needs attention) */
+var ITEMS={
+ health:[
+  {t:'In the past month, how often did you wake up feeling rested?',s:'F'},
+  {t:'How often did you move your body in a way that felt good (walking, stretching, exercise)?',s:'F'},
+  {t:'I have the physical energy to do the things I want to do.',s:'A'},
+  {t:'How often did stress or worry leave you feeling overwhelmed?',s:'F',r:true},
+  {t:'I’ve been ignoring or putting off something my body or mind is telling me.',s:'A',r:true},
+  {t:'The way I eat and drink supports how I want to feel.',s:'A'},
+  {t:'I’m keeping up with the health care I need (check-ups, screenings, follow-ups).',s:'A'},
+  {t:'How often did you feel calm and emotionally steady?',s:'F'}
+ ],
+ joy:[
+  {t:'In the past month, how often did you do something purely because you enjoy it?',s:'F'},
+  {t:'How often did you laugh or feel genuinely delighted?',s:'F'},
+  {t:'I feel guilty when I take time for rest or fun.',s:'A',r:true},
+  {t:'I know what energizes me, and I make room for it.',s:'A'},
+  {t:'My days feel more like obligations than choices.',s:'A',r:true},
+  {t:'How often did you lose track of time doing something you love?',s:'F'},
+  {t:'I have something coming up that I’m looking forward to.',s:'A'},
+  {t:'Something in my life right now inspires me.',s:'A'}
+ ],
+ love:[
+  {t:'How many people could you call in a hard moment, at any time of day?',s:'C'},
+  {t:'I feel seen and understood by the people closest to me.',s:'A'},
+  {t:'A relationship that matters to me feels strained or distant right now.',s:'A',r:true},
+  {t:'In the past month, how often did you have a conversation that went beyond logistics or small talk?',s:'F'},
+  {t:'I regularly let the people who matter to me know I appreciate them.',s:'A'},
+  {t:'How often did you feel lonely, even when you were around others?',s:'F',r:true},
+  {t:'I feel part of a community (neighborhood, faith, work, interest group, or similar).',s:'A'},
+  {t:'I give myself the same kindness I give to others.',s:'A'}
+ ],
+ wealth:[
+  {t:'I know where my money goes each month.',s:'A'},
+  {t:'In the past month, how often did money worries affect your sleep, mood, or decisions?',s:'F',r:true},
+  {t:'I have a plan for my next stage of life, and my finances fit that plan.',s:'A'},
+  {t:'I’ve been avoiding a money decision, conversation, or task.',s:'A',r:true},
+  {t:'My spending reflects what I truly value.',s:'A'},
+  {t:'I could handle an unexpected expense without major disruption.',s:'A'},
+  {t:'I feel confident making financial decisions, or I know who to ask.',s:'A'},
+  {t:'I am able to give to people or causes I care about.',s:'A'}
+ ],
+ curiosity:[
+  {t:'In the past month, how often did you learn something new that genuinely interested you?',s:'F'},
+  {t:'How often did a conversation, book, or idea change how you think about something?',s:'F'},
+  {t:'My routine has started to feel stale or on autopilot.',s:'A',r:true},
+  {t:'I’m exploring a new possibility for my life, even a small one.',s:'A'},
+  {t:'I try things outside my comfort zone.',s:'A'},
+  {t:'There’s a question or interest I’d love to spend more time on.',s:'A'},
+  {t:'How often did you feel mentally engaged rather than just going through the motions?',s:'F'},
+  {t:'I tend to dismiss new ideas before giving them a fair look.',s:'A',r:true}
+ ]
+};
+var PROMPTS={
+ health:'What is one small, doable thing in the coming weeks that would support your body, your rest, or your peace of mind?',
+ joy:'What is one thing that reliably energizes you, and when could you make room for it this month?',
+ love:'Who is one person you would like to feel closer to, and what is one small way to reach out?',
+ wealth:'What is one money question or task you could look at clearly this month, without needing a full plan?',
+ curiosity:'What is one small, low-stakes thing you could explore, learn, or try just for the sake of interest?'
+};
+var TRANSITIONS=['New job or role','Job loss or career pause','Retirement or preparing for it','Move or change in home','New relationship, marriage, or partnership','Separation or divorce','Loss of someone close','Health change (mine or a loved one’s)','Caregiving for a parent, partner, or child','Children leaving or returning home','New grandchild or family addition','Major financial change','None of these','Something else'];
+var BANDWIDTH=['Running on empty','Stretched thin','Managing, with little to spare','Comfortable','Plenty of room for something new'];
+
+var SCREENS=['info','season'].concat(R.map(function(r){return r.key;})).concat(['closing']);
+var SAVE_KEY='treia-annual-progress';
+var tid=T.tid();
+var S={screen:'info',a:{firstName:T.ls('treia-firstName')||'',lastName:T.ls('treia-lastName')||'',email:T.ls('treia-email')||''},results:null,fb:{}};
+
+function app(){return document.getElementById('app');}
+function save(){T.ls(SAVE_KEY,JSON.stringify({screen:S.screen,a:S.a}));}
+function stepbar(show){document.getElementById('stepbar').style.display=show?'flex':'none';}
+
+/* ---------- validation ---------- */
+function screenDone(sc){
+  var a=S.a;
+  if(sc==='info') return a.firstName.trim()&&a.lastName.trim()&&/\S+@\S+\.\S+/.test(a.email);
+  if(sc==='season') return (a.transitions||[]).length&&a.bandwidth;
+  if(sc==='closing') return !!a.liftRing;
+  var ok=a[sc+'_sat']!==undefined&&a[sc+'_imp']!==undefined&&a[sc+'_dir'];
+  ITEMS[sc].forEach(function(_,i){ if(a[sc+'_q'+(i+1)]===undefined) ok=false; });
+  return ok;
+}
+function refresh(){
+  var b=app().querySelector('[data-go="next"]');
+  if(b) b.disabled=!screenDone(S.screen);
+  save();
+}
+
+/* ---------- screens ---------- */
+function progress(){
+  var idx=SCREENS.indexOf(S.screen);
+  return '<div class="progress-row">'+SCREENS.slice(1).map(function(sc,i){
+    var ring=R.filter(function(r){return r.key===sc;})[0];
+    var col=ring?ring.color:'var(--ink-soft)';
+    var w=(i+1)<idx?100:((i+1)===idx?50:0);
+    return '<div class="progress-seg"><div class="fill" style="width:'+w+'%;background:'+col+'"></div></div>';
+  }).join('')+'</div>';
+}
+function nav(backLabel,nextLabel){
+  return '<div class="nav-row"><button class="btn-ghost" data-go="back">&larr; '+backLabel+'</button><button class="btn btn-primary" data-go="next" '+(screenDone(S.screen)?'':'disabled')+'>'+nextLabel+' &rarr;</button></div>';
+}
+function textField(name,label,sub,ph){
+  return '<div class="field"><label class="q" for="'+name+'">'+label+' <span class="opt">(optional)</span></label>'+(sub?'<div class="sub">'+sub+'</div>':'')+'<textarea id="'+name+'" data-text="'+name+'" placeholder="'+esc(ph||'')+'">'+esc(S.a[name]||'')+'</textarea></div>';
+}
+
+function renderInfo(){
+  var a=S.a;
+  app().innerHTML='<div class="wrap"><div class="eyebrow" style="text-align:center;">Five Rings Annual Reflection</div><h2 style="text-align:center;font-size:24px;margin-bottom:8px;">A little about you</h2><p class="lede" style="text-align:center;">The Reflection takes about 15&ndash;20 minutes. Your progress saves on this device, so you can pause and come back.</p><div style="display:flex;justify-content:center;gap:10px;margin:4px 0 20px;">'+R.map(function(r){return T.icon(r.key,40);}).join('')+'</div>'+
+  '<div class="card"><div class="field"><label class="q" for="fn">First name</label><input type="text" id="fn" data-text="firstName" value="'+esc(a.firstName)+'"></div>'+
+  '<div class="field"><label class="q" for="ln">Last name</label><input type="text" id="ln" data-text="lastName" value="'+esc(a.lastName)+'"></div>'+
+  '<div class="field"><label class="q" for="em">Email</label><input type="email" id="em" data-text="email" value="'+esc(a.email)+'"></div></div>'+
+  '<div class="nav-row"><a class="btn-ghost" href="index.html">&larr; Welcome page</a><button class="btn btn-primary" data-go="next" '+(screenDone('info')?'':'disabled')+'>Begin &rarr;</button></div></div>';
+}
+
+function renderSeason(){
+  var a=S.a;
+  app().innerHTML='<div class="wrap">'+progress()+'<div class="eyebrow">Before the Rings</div><h2 style="font-size:26px;margin-bottom:6px;">Your season of life</h2><p class="ring-sub">Context helps your results make sense. Nothing here is scored.</p>'+
+  '<div class="card"><div class="field"><div class="q">Which of these have you experienced in the past 12 months? <span class="opt">(select all that apply)</span></div>'+T.choices('transitions',a.transitions,TRANSITIONS,true,true)+'</div>'+
+  '<div class="field"><div class="q">How much bandwidth do you have right now?</div>'+T.choices('bandwidth',a.bandwidth,BANDWIDTH,false)+'</div>'+
+  textField('energyText','What is taking up most of your energy right now?','','A sentence or two is plenty')+'</div>'+
+  nav('Back','Continue to Health')+'</div>';
+}
+
+function renderRing(key){
+  var ring=R.filter(function(r){return r.key===key;})[0], a=S.a, ri=R.indexOf(ring);
+  var items=ITEMS[key].map(function(it,i){
+    var n=key+'_q'+(i+1);
+    return '<div class="item"><div class="q">'+(i+1)+'. '+esc(it.t)+'</div>'+T.pills(n,a[n],it.s,ring.color)+'</div>';
+  }).join('');
+  var next=ri<R.length-1?'Continue to '+R[ri+1].name:'Continue';
+  app().innerHTML='<div class="wrap">'+progress()+
+  '<div class="ring-head" style="align-items:center;"><div style="display:flex;align-items:center;gap:12px;">'+T.icon(key,46)+'<h2 style="color:'+ring.color+'">'+ring.name+'</h2></div><span class="muted">Ring '+(ri+1)+' of 5</span></div>'+
+  '<div class="def-card" style="background:'+ring.bg+';margin-top:14px;"><div><div class="lbl" style="color:'+ring.color+'">What we mean by '+ring.name+'</div><div class="def">'+ring.def+'</div><div class="ex">'+ring.ex+' Keep this in mind as you answer each question below.</div></div></div>'+
+  '<div class="card"><div class="field"><div class="q">Overall, how satisfied are you with your '+ring.name+' right now?</div>'+T.ten(key+'_sat',a[key+'_sat'],ring.color,'Not at all','Completely')+'</div>'+
+  '<div class="field"><div class="q">How much does '+ring.name+' matter to you in this season of life?</div>'+T.ten(key+'_imp',a[key+'_imp'],ring.color,'Not a priority','Top priority')+'</div></div>'+
+  '<div class="card"><div class="section-label">A closer look</div>'+items+'</div>'+
+  '<div class="card"><div class="field"><div class="q">Compared with a year ago, how is your '+ring.name+' going?</div><div class="sub" style="margin-top:0;">'+ring.name+' here means '+T.lc(ring.def)+'. '+ring.ex+'</div><div class="dir">'+
+    ['Better','About the same','Harder'].map(function(o){var on=a[key+'_dir']===o;return '<button type="button" class="choice'+(on?' on':'')+'" data-pick="'+key+'_dir" data-val="'+o+'" style="justify-content:center;">'+o+'</button>';}).join('')+
+  '</div></div>'+textField(key+'_story','What’s the story behind your answers?','Anything we should know that the numbers might miss.','')+'</div>'+
+  nav(ri===0?'Back':'Back to '+R[ri-1].name,next)+'</div>';
+}
+
+function renderClosing(){
+  var a=S.a;
+  app().innerHTML='<div class="wrap">'+progress()+'<div class="eyebrow">Bringing it together</div><h2 style="font-size:26px;margin-bottom:6px;">Looking across your Rings</h2><p class="ring-sub">Life doesn’t separate the Rings. These last questions look at the whole picture.</p>'+
+  '<div class="card"><div class="field"><div class="q">Which Ring, if it improved, would lift the others most?</div>'+T.choices('liftRing',a.liftRing,R.map(function(r){return r.name;}).concat(['Not sure yet']),false,true)+'</div>'+
+  textField('aliveText','When did you last feel most alive? What were you doing?','','')+
+  textField('yearText','What would you like to be true a year from now?','','')+'</div>'+
+  nav('Back to Curiosity','See my results')+'</div>';
+}
+
+/* ---------- scoring ---------- */
+function compute(){
+  var a=S.a, sc={}, scores={}, imp={};
+  R.forEach(function(r){
+    var vals=ITEMS[r.key].map(function(it,i){var v=a[r.key+'_q'+(i+1)];return it.r?6-v:v;});
+    var avg=vals.reduce(function(x,y){return x+y;},0)/vals.length;
+    var items10=(avg-1)/4*10, sat=a[r.key+'_sat'];
+    var score=(sat+items10)/2;
+    sc[r.key]={score:score,sat:sat,items10:items10,imp:a[r.key+'_imp'],dir:a[r.key+'_dir'],story:a[r.key+'_story']||''};
+    scores[r.key]=score; imp[r.key]=a[r.key+'_imp'];
+  });
+  var overall=R.reduce(function(s,r){return s+scores[r.key];},0)/R.length;
+  // focus: biggest gap between importance and score among Rings that matter (importance 6+)
+  var focus=null,best=0;
+  R.forEach(function(r){var g=sc[r.key].imp-sc[r.key].score; if(sc[r.key].imp>=6&&g>best){best=g;focus=r.key;}});
+  if(!focus){focus=R.slice().sort(function(x,y){return scores[x.key]-scores[y.key];})[0].key;}
+  var strongest=R.slice().sort(function(x,y){return scores[y.key]-scores[x.key];})[0].key;
+  return {rings:sc,scores:scores,imp:imp,overall:overall,focus:focus,strongest:strongest};
+}
+
+function nameOf(k){return R.filter(function(r){return r.key===k;})[0].name;}
+function submit(res){
+  var a=S.a, row={'Date':new Date().toISOString(),'Tester ID':tid,'First Name':a.firstName,'Last Name':a.lastName,'Email':a.email,
+    'Overall (0-10)':+res.overall.toFixed(2),'Focus Ring':nameOf(res.focus),'Strongest Ring':nameOf(res.strongest),
+    'Transitions (12 mo)':(a.transitions||[]).join(', '),'Bandwidth':a.bandwidth,'Energy Going To':a.energyText||''};
+  R.forEach(function(r){var x=res.rings[r.key];
+    row[r.name+' Score']=+x.score.toFixed(2); row[r.name+' Satisfaction']=x.sat; row[r.name+' Items (0-10)']=+x.items10.toFixed(2);
+    row[r.name+' Importance']=x.imp; row[r.name+' vs Last Year']=x.dir; row[r.name+' Story']=x.story;});
+  row['Ring That Would Lift Others']=a.liftRing; row['Most Alive']=a.aliveText||''; row['A Year From Now']=a.yearText||'';
+  R.forEach(function(r){ITEMS[r.key].forEach(function(_,i){row[r.name+' Q'+(i+1)]=a[r.key+'_q'+(i+1)];});});
+  T.post('Annual Reflection',row);
+  // personal history on this device
+  var hk='treia-annual-history:'+a.email.toLowerCase().trim(), h=[];
+  try{h=JSON.parse(T.ls(hk))||[];}catch(e){}
+  h.unshift({date:row.Date,scores:res.scores,overall:res.overall}); T.ls(hk,JSON.stringify(h.slice(0,10)));
+  T.ls('treia-firstName',a.firstName); T.ls('treia-lastName',a.lastName); T.ls('treia-email',a.email);
+  T.lsDel(SAVE_KEY);
+}
+
+function renderResults(){
+  var res=S.results, a=S.a;
+  var arrow={'Better':'↗ better than last year','About the same':'→ about the same as last year','Harder':'↘ harder than last year'};
+  var rows=R.map(function(r){var x=res.rings[r.key];
+    var note='';
+    if(x.sat-x.items10>=2.5) note='You rated '+r.name+' higher overall than your detailed answers suggest. Worth a second look?';
+    else if(x.items10-x.sat>=2.5) note='Your detailed answers in '+r.name+' are stronger than your overall rating. You may be doing better here than it feels.';
+    return '<div class="result-row">'+T.icon(r.key,34)+'<div class="rr-body"><div class="rr-top"><b style="color:'+r.color+'">'+r.name+'</b><span>'+x.score.toFixed(1)+' / 10</span></div>'+
+      '<div class="track"><div class="fill" style="width:'+(x.score*10)+'%;background:'+r.color+'"></div><div class="imp" style="left:calc('+(x.imp*10)+'% - 1px)" title="Importance"></div></div>'+
+      '<div class="muted" style="margin-top:6px;">'+r.def+'<br>Importance '+x.imp+'/10 &middot; '+arrow[x.dir]+'</div>'+(note?'<div class="note">'+note+'</div>':'')+'</div></div>';
+  }).join('');
+  var f=R.filter(function(r){return r.key===res.focus;})[0], fx=res.rings[res.focus];
+  var why=fx.imp>=6&&fx.imp>fx.score?'<strong>'+f.name+'</strong> matters a lot to you right now ('+fx.imp+'/10), and it has the biggest gap between how much it matters and how it’s going.':'<strong>'+f.name+'</strong> is the Ring with the most room to grow right now.';
+  var st=R.filter(function(r){return r.key===res.strongest;})[0];
+  var words='';
+  if(fx.story) words+='<div class="muted">You wrote about '+f.name+':</div><div class="quote">'+esc(fx.story)+'</div>';
+  if(a.aliveText) words+='<div class="muted">When you feel most alive:</div><div class="quote">'+esc(a.aliveText)+'</div>';
+  if(a.yearText) words+='<div class="muted">A year from now, you hope:</div><div class="quote">'+esc(a.yearText)+'</div>';
+  var lift=a.liftRing&&a.liftRing!=='Not sure yet'?'<p style="margin-top:10px;">You also said <strong>'+esc(a.liftRing)+'</strong> would lift the others most'+(a.liftRing===f.name?', which matches your results.':'. Keep both in view as you choose where to start.')+'</p>':'';
+  app().innerHTML='<div class="wrap"><div style="text-align:center;margin-bottom:6px;">'+T.wordmark()+'<div class="eyebrow" style="margin-top:6px;">Your Five Rings, '+esc(a.firstName)+'</div></div>'+
+    T.radar(res.scores,res.imp)+'<div class="legend"><span><svg width="22" height="6"><line x1="0" y1="3" x2="22" y2="3" stroke="#2E2A24" stroke-width="2.2"/></svg>How it’s going</span><span><svg width="22" height="6"><line x1="0" y1="3" x2="22" y2="3" stroke="#2E2A24" stroke-dasharray="4 4" stroke-width="1.5"/></svg>How much it matters</span></div>'+
+    '<div class="card" style="margin-top:20px;">'+rows+'<p class="muted" style="margin-top:12px;">The dark tick on each bar marks how much that Ring matters to you. Scores blend your overall rating with your detailed answers.</p></div>'+
+    '<div class="insight" style="background:'+f.bg+'"><div class="eyebrow" style="color:'+f.color+'">Where to focus</div><p>'+why+'</p>'+lift+'<p style="margin-top:10px;"><em>'+PROMPTS[res.focus]+'</em></p></div>'+
+    '<div class="insight" style="background:var(--card);border:1px solid var(--line);"><div class="eyebrow">Where you’re strong</div><p><strong>'+st.name+'</strong> is your strongest Ring right now. Strength in one Ring can support the others.</p></div>'+
+    (words?'<div class="card" style="margin-top:18px;"><div class="eyebrow">In your words</div>'+words+'</div>':'')+
+    '<div class="card no-print" style="margin-top:22px;border:2px solid var(--ink);text-align:center;"><h3 style="font-size:20px;margin-bottom:16px;">Before you continue&hellip;</h3><button class="btn btn-primary btn-full" data-go="feedback">Step 2 of 3: Share your feedback &rarr;</button></div>'+
+    '<div class="no-print" style="text-align:center;margin-top:16px;"><button class="btn btn-secondary" onclick="window.print()">Print / Save as PDF</button></div></div>';
+}
+
+function renderFeedback(){
+  var fb=S.fb, ok=fb.ease&&fb.resonance;
+  function fbText(n,l,ph){return '<div class="field"><label class="q" for="'+n+'">'+l+' <span class="opt">(optional)</span></label><textarea id="'+n+'" data-text="'+n+'" placeholder="'+ph+'">'+esc(fb[n]||'')+'</textarea></div>';}
+  app().innerHTML='<div class="wrap"><div class="eyebrow">Step 2 of 3</div><h2 style="font-size:26px;margin-bottom:16px;">Help us improve</h2><div class="card">'+
+    '<div class="field"><div class="q">1. My results sound like me.</div>'+T.pills('resonance',fb.resonance,'A','#6E8B6B')+'</div>'+
+    fbText('resonanceNote','2. What felt most accurate? What felt off?','For example, a Ring that scored higher or lower than you expected')+
+    '<div class="field"><div class="q">3. How easy was the Reflection to complete?</div>'+T.pills('ease',fb.ease,['Very difficult','Difficult','Okay','Easy','Very easy'],'#6E8B6B')+'</div>'+
+    '<div class="field"><div class="q">4. The length felt&hellip;</div>'+T.pills('length',fb.length,['Much too long','A bit long','About right','A bit short','Too short'],'#6E8B6B')+'</div>'+
+    fbText('confusing','5. Were any questions confusing or hard to answer?','Which ones, and why?')+
+    fbText('missing','6. Was anything missing that you expected to see?','Topics, questions, or features')+
+    fbText('changes','7. Anything else you would change about the experience?','')+
+    '</div><div class="nav-row"><button class="btn-ghost" data-go="results">&larr; Back to results</button><button class="btn btn-primary" data-go="fbnext" '+(ok?'':'disabled')+'>Next: Explore a Treia Partnership &rarr;</button></div></div>';
+}
+function fbRefresh(){var b=app().querySelector('[data-go="fbnext"]'); if(b) b.disabled=!(S.fb.ease&&S.fb.resonance);}
+
+function renderTransition(){
+  app().innerHTML='<div class="wrap"><div class="card" style="text-align:center;padding:40px 26px;"><div style="font-size:48px;">&#127793;</div><h2 style="font-size:26px;margin:8px 0 12px;">Thank you!</h2><p class="lede">Your Reflection and feedback are saved. One last step: the Treia Partnership Assessment.</p><p class="lede">Please answer it even if you think you’d rather reflect on your own. We’re testing whether these questions would help us introduce compatible peers, and we’ll ask about your own interest at the end.</p><a href="partner-matching-survey.html" class="btn btn-primary btn-full" style="margin-top:14px;">Step 3 of 3: Explore a Treia Partnership &rarr;</a></div></div>';
+}
+
+/* ---------- router ---------- */
+function render(){
+  stepbar(['feedback','transition'].indexOf(S.screen)<0);
+  if(S.screen==='resume') return renderResume();
+  if(S.screen==='info') renderInfo();
+  else if(S.screen==='season') renderSeason();
+  else if(S.screen==='closing') renderClosing();
+  else if(S.screen==='results') renderResults();
+  else if(S.screen==='feedback') renderFeedback();
+  else if(S.screen==='transition') renderTransition();
+  else renderRing(S.screen);
+}
+function renderResume(){
+  app().innerHTML='<div class="wrap"><div class="card" style="text-align:center;padding:40px 26px;"><h2 style="font-size:26px;margin-bottom:10px;">Welcome back!</h2><p class="lede">You have a Reflection in progress. Continue where you left off, or start fresh?</p><button class="btn btn-primary btn-full" data-go="resume">Continue where I left off &rarr;</button><div style="margin-top:10px;"><button class="btn-ghost" data-go="fresh">Start fresh</button></div></div></div>';
+}
+function go(sc){S.screen=sc;T.scrollTop();render();}
+
+// pickers write into S.a during the survey and S.fb on the feedback page
+T.bind(function(){return S.screen==='feedback'?S.fb:S.a;},function(){ if(S.screen==='feedback') fbRefresh(); else refresh(); });
+
+document.addEventListener('click',function(e){
+  var b=e.target.closest('[data-go]'); if(!b) return;
+  var g=b.getAttribute('data-go'), i=SCREENS.indexOf(S.screen);
+  if(g==='next'){
+    if(!screenDone(S.screen)){return;}
+    if(S.screen==='info'){T.ls('treia-firstName',S.a.firstName);T.ls('treia-lastName',S.a.lastName);T.ls('treia-email',S.a.email);}
+    if(S.screen==='closing'){S.results=compute();submit(S.results);go('results');}
+    else go(SCREENS[i+1]);
+  }
+  else if(g==='back'){go(SCREENS[Math.max(0,i-1)]);}
+  else if(g==='feedback'){go('feedback');}
+  else if(g==='results'){go('results');}
+  else if(g==='fbnext'){
+    var f=S.fb;
+    T.post('Reflection Feedback',{'Date':new Date().toISOString(),'Tester ID':tid,'Name':S.a.firstName+' '+S.a.lastName,'Email':S.a.email,
+      'Results Sound Like Me (1-5)':f.resonance,'What Felt Right / Off':f.resonanceNote||'','Ease (1-5)':f.ease,'Length (1=too long, 5=too short)':f.length||'',
+      'Confusing Questions':f.confusing||'','Missing':f.missing||'','Changes':f.changes||''});
+    go('transition');
+  }
+  else if(g==='resume'){go(S.screen=S._resume||'info');}
+  else if(g==='fresh'){T.lsDel(SAVE_KEY);S.a={firstName:S.a.firstName,lastName:S.a.lastName,email:S.a.email};go('info');}
+});
+
+/* ---------- start ---------- */
+var saved=null; try{saved=JSON.parse(T.ls(SAVE_KEY));}catch(e){}
+if(saved&&saved.a&&saved.screen&&saved.screen!=='info'){S.a=saved.a;S._resume=saved.screen;S.screen='resume';}
+render();
+})();
+</script>
+</body>
+</html>

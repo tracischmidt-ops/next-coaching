@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Treia — Beta Test</title>
+<link rel="stylesheet" href="treia.css">
+<style>
+.steps{display:flex;flex-direction:column;gap:12px;margin:18px 0 26px;}
+.step{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;display:flex;gap:16px;}
+.step .n{width:32px;height:32px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;flex:none;}
+.step h3{font-size:16px;margin-bottom:3px;}
+.step p{font-size:13px;color:var(--ink-soft);}
+.rings{text-align:center;font-weight:700;letter-spacing:.05em;margin:8px 0 20px;}
+.rings span{margin:0 6px;}
+.dots{display:flex;justify-content:center;gap:8px;margin-top:18px;}
+.dots span{width:28px;height:5px;border-radius:999px;background:var(--line);}
+.dots span.on{background:var(--ink);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow" style="text-align:center;margin-top:16px;">Beta test</div>
+  <script src="treia-common.js"></script>
+  <script>document.write(TREIA.wordmark());</script>
+  <p class="tagline">Fresh perspective. Greater balance.</p>
+
+  <div class="dots" aria-hidden="true"><span></span><span></span><span></span></div>
+
+  <section class="pg" data-n="1">
+  <h1 style="text-align:center;font-size:30px;margin:26px 0 18px;">Welcome, and thank you</h1>
+  <div class="card" style="margin:6px 0 24px;">
+    <div class="eyebrow">Why we started Treia</div>
+    <p style="font-size:15px;margin-bottom:12px;">We met through LinkedIn for business. Over two years, our standing weekly conversations became a friendship built on trust and honest encouragement. We talk about family, health, money, goals and what inspires us, because life doesn&rsquo;t keep those things separate.</p>
+    <p style="font-size:15px;margin-bottom:12px;">We&rsquo;re not involved in each other&rsquo;s daily decisions, and that distance lets us offer perspective we&rsquo;d never find on our own: <em>close enough to care, far enough to be honest.</em> Treia is our way of sharing what we discovered, whether you reflect on your own or alongside a peer.</p>
+    <p style="font-family:'Fraunces',serif;font-style:italic;color:var(--ink-soft);">Traci &amp; Michelle</p>
+  </div>
+  <p class="lede">You are part of a small group of friends and family helping us test the Treia experience before we share it more broadly. We are testing both the questions and the experience, so your honest feedback is extremely valuable.</p>
+  <div class="nav-row"><span></span><button class="btn btn-primary" data-pg="2">Next: The Five Rings &rarr;</button></div>
+  </section>
+
+  <section class="pg" data-n="2" hidden>
+  <h1 style="text-align:center;font-size:30px;margin:26px 0 18px;">The Five Rings</h1>
+  <p class="lede">Treia helps people bring fresh perspective and greater balance to their lives, independently or alongside a peer. It is built around five interconnected areas of life we call the <strong style="color:var(--ink)">Five Rings</strong>.</p>
+  <div class="card" style="margin:22px 0;">
+        <script>document.write(TREIA.ringsFigure());</script>
+    <div class="ring-list" id="ringList"></div>
+    <script>document.getElementById('ringList').innerHTML=TREIA.RINGS.map(function(r){return '<div class="ring-li">'+TREIA.icon(r.key,40)+'<div><h3 style="color:'+r.color+'">'+r.name+'</h3><p><strong style="color:var(--ink);font-weight:600;">'+r.def+'</strong> '+r.ex+'</p></div></div>';}).join('');</script>
+    <hr class="divider" style="margin:22px 0 16px;">
+    <p class="lede" style="margin:0;">Life doesn’t separate the Rings. Health affects relationships, finances affect peace of mind, and curiosity creates opportunities. That’s why they overlap. In the Reflection you’ll look at each Ring on its own, then at how they fit together.</p>
+  </div>
+  <div class="nav-row"><button class="btn-ghost" data-pg="1">&larr; Back</button><button class="btn btn-primary" data-pg="3">Next: What you&rsquo;ll do &rarr;</button></div>
+  </section>
+
+  <section class="pg" data-n="3" hidden>
+  <h1 style="text-align:center;font-size:30px;margin:26px 0 18px;">What you&rsquo;ll do</h1>
+  <div class="steps">
+    <div class="step"><div class="n" style="background:var(--health)">1</div><div><h3>Five Rings Annual Reflection</h3><p>Reflect on each of the Five Rings: how it's going, how much it matters to you right now, and what's behind your answers. You'll receive a picture of your current balance.</p></div></div>
+    <div class="step"><div class="n" style="background:var(--joy)">2</div><div><h3>Help us improve</h3><p>Tell us whether your results sounded like you, and what felt clear, confusing, or missing.</p></div></div>
+    <div class="step"><div class="n" style="background:var(--love)">3</div><div><h3>Explore a Treia Partnership</h3><p>Answer a few questions that help us test how we might introduce compatible peers. Please complete this step even if you'd rather reflect on your own. It helps us test matching.</p></div></div>
+  </div>
+
+  <div class="card" style="font-size:14px;color:var(--ink-soft);font-style:italic;">We won't make any partner introductions from this test. We're checking whether the questions give us enough to make thoughtful introductions later.</div>
+
+  <p class="lede" style="margin-top:22px;">There are no right or wrong answers. Simply respond based on where you are in your life today.</p>
+  <hr class="divider">
+  <p class="muted" style="text-align:center;">About 15&ndash;20 minutes &middot; You can pause the Reflection and return on the same device &middot; No account needed</p>
+
+  <a href="5-rings-survey.html" class="btn btn-primary btn-full" style="margin-top:20px;">Begin the Five Rings Annual Reflection &rarr;</a>
+  <div style="text-align:center;margin-top:14px;"><button class="btn-ghost" data-pg="2">&larr; Back</button></div>
+  <p style="text-align:center;margin-top:36px;font-size:14px;color:var(--ink-soft);">With gratitude,<br><strong style="color:var(--ink)">Traci &amp; Michelle</strong></p>
+  </section>
+</div>
+<script>
+TREIA.tid();
+(function(){
+  var pgs=document.querySelectorAll('.pg'), dots=document.querySelectorAll('.dots span');
+  function show(n){
+    pgs.forEach(function(p){p.hidden=p.getAttribute('data-n')!=String(n);});
+    dots.forEach(function(d,i){d.className=i<n?'on':'';});
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  document.addEventListener('click',function(e){var b=e.target.closest('[data-pg]'); if(b) show(+b.getAttribute('data-pg'));});
+  show(1);
+})();
+</script>
+</body>
+</html>

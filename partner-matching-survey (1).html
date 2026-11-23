@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Treia — Partnership Assessment</title>
+<link rel="stylesheet" href="treia.css">
+</head>
+<body>
+<div id="stepbar" class="step-bar"><div class="num" style="background:var(--love)">3</div><div class="label">Explore a Treia Partnership</div><div class="of">&middot; Step 3 of 3</div></div>
+<div id="app"></div>
+<script src="treia-common.js"></script>
+<script>
+(function(){
+var T=TREIA, esc=T.esc, tid=T.tid();
+var D={firstName:T.ls('treia-firstName')||'',lastName:T.ls('treia-lastName')||'',email:T.ls('treia-email')||''};
+var SAVE_KEY='treia-partnership-progress';
+try{var sv=JSON.parse(T.ls(SAVE_KEY)); if(sv&&sv.D){D=sv.D;}}catch(e){}
+
+var SECTIONS=[
+ {id:'about',title:'About you',sub:'We’ve filled in what we know. Please confirm or update.',fields:[
+  {id:'firstName',label:'First name',type:'text',req:true},
+  {id:'lastName',label:'Last name',type:'text',req:true},
+  {id:'email',label:'Email',type:'email',req:true},
+  {id:'ageRange',label:'Age range',type:'radio',req:true,options:['Under 30','30–39','40–49','50–59','60–69','70+']},
+  {id:'relStatus',label:'Current relationship status',type:'radio',req:true,options:['Single','Partnered / married','Divorced / widowed','Prefer not to say']},
+  {id:'timezone',label:'Time zone',type:'select',req:true,options:['Eastern','Central','Mountain','Pacific','Alaska','Hawaii','Outside the U.S.']},
+  {id:'region',label:'Region',type:'select',req:true,options:['Northeast – New England','Northeast – Mid Atlantic','Southeast – South Atlantic','Southeast – Florida','Southeast – Gulf Coast','Midwest – Great Lakes','Midwest – Plains','Southwest – Texas','Southwest – Desert Southwest','West – California','West – Pacific Northwest','West – Mountain West','Canada','United Kingdom / Ireland','Europe','Australia / New Zealand','Asia','Latin America','Other']},
+  {id:'regionOther',label:'If you selected “Other,” please specify',type:'text'}
+ ]},
+ {id:'stage',title:'Career and life stage',sub:'Help us understand where you are professionally and personally.',fields:[
+  {id:'careerStage',label:'Current career stage',type:'radio',req:true,options:['Early career','Mid-career','Senior leadership','Entrepreneur / business owner','Changing careers','Preparing for retirement','Semi-retired','Fully retired','Other']},
+  {id:'careerStageOther',label:'If other, please describe',type:'text'},
+  {id:'industry',label:'Industry (current or most recent)',type:'select',req:true,options:['Legal services','Finance / banking / private equity','Technology / software','Healthcare / medical','Education','Government / public sector','Real estate / construction','Manufacturing / industrial','Media / marketing','Nonprofit / philanthropy','Consulting / professional services','Agriculture / food systems','Retail / hospitality','Other']},
+  {id:'industryOther',label:'If other, please specify',type:'text'},
+  {id:'retirementStage',label:'Where are you in thinking about retirement?',type:'radio',req:true,options:['Not thinking about it yet','Beginning to think about it','Within 5–10 years','Within 2–5 years','Actively preparing now','Already retired and redefining life']}
+ ]},
+ {id:'style',title:'How you work best with others',sub:'No right answers. We’re looking for what genuinely fits you.',fields:[
+  {id:'supportStyle',label:'When you’re working through something with another person, what kind of support helps you most?',type:'radio',req:true,options:['Encouraging — someone in my corner','Direct and honest — someone who tells me the truth','Structured — someone who helps me get specific','Reflective — space to think things through together','A balance of encouragement and honest challenge']},
+  {id:'naturalStyle',label:'When a friend is working through something, how do you naturally show up for them?',type:'radio',req:true,options:['Encourager','Honest truth-teller','Strategic thinker','Structured planner','Reflective listener']},
+  {id:'commStyle',label:'How do you prefer to process and communicate?',type:'radio',req:true,options:['I think out loud and process in real time','I reflect first, then share what I’ve worked through','It depends on the topic — I do both']},
+  {id:'pastSupport',label:'Think of a time someone supported you through a change or goal. If it fell flat, what happened?',sub:'If you’ve never had this kind of support, choose the last option.',type:'radio',req:true,options:['They were too pushy or intense','They were too easy on me — not enough honest feedback','They were inconsistent or hard to reach','We started strong but lost momentum','It went well','I’ve never had this kind of support']},
+  {id:'frequency',label:'How often would you ideally talk with a Treia Partner?',type:'radio',req:true,options:['Weekly','Every two weeks','Monthly','Flexible']},
+  {id:'meetingLength',label:'How long would you want each conversation to be?',type:'radio',req:true,options:['30 minutes','45 minutes','60 minutes','Flexible']},
+  {id:'format',label:'Preferred ways to connect',sub:'Select all that apply.',type:'multi',req:true,options:['Video calls','Phone calls','Text check-ins','Email reflections','In person (if local)']}
+ ]},
+ {id:'personality',title:'Your style and personality',sub:'These help us find someone who meshes with how you naturally operate.',fields:[
+  {id:'humor',label:'How important are humor and lightness in your conversations?',type:'scale',req:true,labels:['Keep it serious','Mostly serious','Some of both','Important','Essential']},
+  {id:'organization',label:'How would you describe your natural organization style?',type:'scale',req:true,labels:['Very spontaneous','Spontaneous','In between','Structured','Highly structured']},
+  {id:'punctuality',label:'How important is punctuality and keeping to a schedule?',type:'scale',req:true,labels:['Very flexible','Flexible','Somewhat','Important','Very important']},
+  {id:'energy',label:'How would you describe your general energy?',type:'radio',req:true,options:['Quiet and reflective','Somewhere in the middle','Energetic and driven']}
+ ]},
+ {id:'focus',title:'What you’d bring to the conversation',sub:'This is where your Five Rings come in.',fields:[
+  {id:'rings',label:'Which Rings would you most want to talk about right now?',sub:'Select all that apply.',type:'multi',req:true,options:['Health','Joy','Love','Wealth','Curiosity']},
+  {id:'stuck',label:'Where do you feel most stuck right now?',sub:'Be as honest as you can. It helps us find someone who understands.',type:'textarea',req:true},
+  {id:'helpWith',label:'What would you most hope a Treia Partner could help with?',sub:'Select all that apply.',type:'multi',req:true,options:['A fresh perspective on decisions','Big life transitions','Career changes','Preparing for or navigating retirement','Personal growth','Following through on intentions','Expanding curiosity and learning','Relationships']},
+  {id:'conversations',label:'What kinds of conversations energize you most?',sub:'Select all that apply.',type:'multi',options:['Big ideas and possibilities','Practical problem solving','Habits and follow-through','Career strategy','Personal reflection','Creative thinking']},
+  {id:'offLimits',label:'Are there any topics you’d prefer to keep out of a partnership?',type:'textarea'}
+ ]},
+ {id:'prefs',title:'Partnership preferences',sub:'A few questions to help us find a good fit.',fields:[
+  {id:'lifeStageMatch',label:'Would you prefer a Treia Partner in a similar life stage, or someone different?',type:'radio',req:true,options:['Very similar — someone who really gets where I am','Somewhat similar — close enough to relate','Open to difference — stage matters less than fit']},
+  {id:'genderPref',label:'Gender preference for a Treia Partner',type:'radio',options:['No preference','Female','Male','Prefer not to say']},
+  {id:'dealbreaker',label:'Is there anything about a potential partner that would be a dealbreaker for you?',type:'textarea'},
+  {id:'availability',label:'Best times to talk',sub:'Select all that apply.',type:'multi',req:true,options:['Weekday mornings','Weekday afternoons','Weekday evenings','Weekend mornings','Weekend afternoons','Weekend evenings']},
+  {id:'commitment',label:'If you had a Treia Partner, how committed would you be to showing up consistently?',type:'ten',req:true,lo:'Casual',hi:'Fully committed'},
+  {id:'success',label:'What would make a Treia Partnership worthwhile for you six months from now?',type:'textarea',req:true},
+  {id:'anythingElse',label:'Anything else we should know about you?',type:'textarea'}
+ ]},
+ {id:'interest',title:'Your own interest',sub:'Treia is designed to work fully on your own, with a partnership as an option. Every answer here is equally helpful to us, so please answer for yourself today rather than how you think you should.',fields:[
+  {id:'interest',label:'Imagine Treia introduced you to a compatible peer for a three-month trial: a conversation every few weeks, easy to pause or end at any time. How would you feel about trying it?',type:'radio',req:true,options:['I’d want to start right away','I’d likely give it a try','I’m curious, but I’d want to know more first','Probably not right now, but maybe later','Not for me — I’d rather reflect on my own']},
+  {id:'hesitations',label:'What, if anything, gives you pause about having a Treia Partner?',sub:'Select all that apply.',type:'multi',req:true,options:['Finding the time','Opening up to someone I don’t know yet','Privacy — what happens to what I share','Being paired with the wrong person','I already have someone like this in my life','I prefer to reflect on my own','Not sure what a partnership involves','Nothing gives me pause','Something else']},
+  {id:'appeal',label:'What would make a Treia Partnership more appealing to you?',type:'textarea'}
+ ]},
+ {id:'feedback',title:'Help us improve',sub:'Two quick questions about this assessment.',fields:[
+  {id:'fbMissing',label:'Is there anything else we should know to introduce you to a compatible Treia Partner?',type:'textarea'},
+  {id:'fbAdd',label:'Are there any questions we should add, remove, or reword?',type:'textarea'}
+ ]}
+];
+
+var idx=0; try{var sv2=JSON.parse(T.ls(SAVE_KEY)); if(sv2&&sv2.idx) idx=Math.min(sv2.idx,SECTIONS.length-1);}catch(e){}
+function app(){return document.getElementById('app');}
+function save(){T.ls(SAVE_KEY,JSON.stringify({idx:idx,D:D}));}
+
+function valid(sec){
+  return sec.fields.every(function(f){
+    if(!f.req) return true; var v=D[f.id];
+    if(f.type==='multi') return v&&v.length;
+    if(f.type==='scale'||f.type==='ten') return v!==undefined&&v!==null;
+    return v&&String(v).trim()!=='';
+  })&&(sec.id!=='about'||/\S+@\S+\.\S+/.test(D.email||''));
+}
+function field(f){
+  var opt=f.req?'':' <span class="opt">(optional)</span>', sub=f.sub?'<div class="sub">'+esc(f.sub)+'</div>':'', v=D[f.id];
+  var lab='<div class="q">'+esc(f.label)+opt+'</div>'+sub;
+  if(f.type==='text'||f.type==='email') return '<div class="field"><label class="q" for="'+f.id+'">'+esc(f.label)+opt+'</label>'+sub+'<input type="'+f.type+'" id="'+f.id+'" data-text="'+f.id+'" value="'+esc(v||'')+'"></div>';
+  if(f.type==='textarea') return '<div class="field"><label class="q" for="'+f.id+'">'+esc(f.label)+opt+'</label>'+sub+'<textarea id="'+f.id+'" data-text="'+f.id+'">'+esc(v||'')+'</textarea></div>';
+  if(f.type==='select') return '<div class="field"><label class="q" for="'+f.id+'">'+esc(f.label)+opt+'</label>'+sub+'<select id="'+f.id+'" data-sel="'+f.id+'"><option value="">Select one…</option>'+f.options.map(function(o){return '<option'+(v===o?' selected':'')+'>'+esc(o)+'</option>';}).join('')+'</select></div>';
+  if(f.type==='radio') return '<div class="field">'+lab+T.choices(f.id,v,f.options,false)+'</div>';
+  if(f.type==='multi') return '<div class="field">'+lab+T.choices(f.id,v,f.options,true,true)+'</div>';
+  if(f.type==='scale') return '<div class="field">'+lab+T.pills(f.id,v,f.labels,'#B5654A')+'</div>';
+  if(f.type==='ten') return '<div class="field">'+lab+T.ten(f.id,v,'#B5654A',f.lo,f.hi)+'</div>';
+}
+function refresh(){var b=app().querySelector('[data-go="next"]'); if(b) b.disabled=!valid(SECTIONS[idx]); save();}
+
+function render(){
+  if(idx>=SECTIONS.length) return renderThanks();
+  var sec=SECTIONS[idx], last=idx===SECTIONS.length-1, pct=Math.round((idx+1)/SECTIONS.length*100);
+  app().innerHTML='<div class="wrap"><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--ink-soft);font-weight:600;margin-bottom:8px;"><span>Treia Partnership Assessment</span><span>'+(idx+1)+' of '+SECTIONS.length+'</span></div>'+
+   '<div class="progress-row"><div class="progress-seg"><div class="fill" style="width:'+pct+'%;background:var(--love)"></div></div></div>'+
+   '<h2 style="font-size:24px;margin-bottom:6px;">'+esc(sec.title)+'</h2><p class="ring-sub">'+esc(sec.sub)+'</p>'+
+   (idx===0?'<div class="card" style="font-size:14px;color:var(--ink-soft);font-style:italic;margin-bottom:16px;">Please complete this even if you’d rather reflect on your own. We’re testing whether these questions would help us make thoughtful introductions. No introductions will be made from this test.</div>':'')+
+   '<div class="card">'+sec.fields.map(field).join('')+'</div>'+
+   '<div class="nav-row">'+(idx===0?'<span></span>':'<button class="btn-ghost" data-go="back">&larr; Back</button>')+'<button class="btn btn-primary" data-go="next" '+(valid(sec)?'':'disabled')+'>'+(last?'Submit':'Continue &rarr;')+'</button></div></div>';
+}
+
+function col(id){return id.replace(/([A-Z])/g,' $1').replace(/^./,function(c){return c.toUpperCase();});}
+function submit(){
+  var row={'Date':new Date().toISOString(),'Tester ID':tid};
+  SECTIONS.forEach(function(sec){sec.fields.forEach(function(f){var v=D[f.id]; row[col(f.id)]=Array.isArray(v)?v.join(', '):(v===undefined?'':v);});});
+  // simple interest code for sorting: 5 = start right away ... 1 = not for me
+  var opts=SECTIONS.filter(function(s){return s.id==='interest';})[0].fields[0].options;
+  row['Partner Interest (5=high)']=D.interest?5-opts.indexOf(D.interest):'';
+  T.post('Partnership Assessment',row);
+  T.lsDel(SAVE_KEY);
+}
+
+function renderThanks(){
+  document.getElementById('stepbar').style.display='none';
+  app().innerHTML='<div class="wrap" style="text-align:center;max-width:600px;"><div style="margin-top:20px;">'+T.wordmark()+'</div><div style="font-size:46px;margin:16px 0;">&#127793;</div><h2 style="font-size:30px;margin-bottom:16px;">Thank you!</h2>'+
+  '<p class="lede">You have completed the Treia beta experience.</p>'+
+  '<p class="lede">Thank you for reflecting on your Five Rings, completing the Treia Partnership Assessment, and sharing your feedback on both. Your honest input will help us make Treia clearer, more useful, and easier to navigate, whether someone uses it independently or alongside a peer.</p>'+
+  '<h3 style="font-size:18px;margin:24px 0 10px;">What happens next?</h3>'+
+  '<p class="lede">We will review the feedback from this testing group and use it to improve the Reflection and the overall experience.</p>'+
+  '<p class="lede">Completing the Partnership Assessment does not commit you to anything. If we move forward with a test introduction, we will contact you first to confirm your interest.</p>'+
+  '<p class="lede">We hope this gave you a helpful moment to pause and consider your balance across</p>'+
+  '<p style="font-weight:700;letter-spacing:.04em;margin:8px 0 20px;"><span style="color:var(--health)">Health</span> &bull; <span style="color:var(--joy)">Joy</span> &bull; <span style="color:var(--love)">Love</span> &bull; <span style="color:var(--wealth)">Wealth</span> &bull; <span style="color:var(--curiosity)">Curiosity</span></p>'+
+  '<p class="tagline">Fresh perspective. Greater balance.</p>'+
+  '<p style="margin-top:28px;font-size:15px;">With gratitude,<br><strong>Traci &amp; Michelle</strong></p></div>';
+}
+
+T.bind(D,refresh);
+document.addEventListener('change',function(e){var n=e.target.getAttribute&&e.target.getAttribute('data-sel'); if(n){D[n]=e.target.value;refresh();}});
+document.addEventListener('click',function(e){
+  var b=e.target.closest('[data-go]'); if(!b) return;
+  if(b.getAttribute('data-go')==='back'){idx--;}
+  else { if(!valid(SECTIONS[idx])) return; if(idx===SECTIONS.length-1) submit(); idx++; }
+  if(idx<SECTIONS.length) save();
+  T.scrollTop(); render();
+});
+render();
+})();
+</script>
+</body>
+</html>
