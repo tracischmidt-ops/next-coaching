@@ -78,7 +78,7 @@ TREIA.tid();
   function show(n){
     pgs.forEach(function(p){p.hidden=p.getAttribute('data-n')!=String(n);});
     dots.forEach(function(d,i){d.className=i<n?'on':'';});
-    window.scrollTo({top:0,behavior:'smooth'});
+    TREIA.scrollTop();
   }
   document.addEventListener('click',function(e){var b=e.target.closest('[data-pg]'); if(b) show(+b.getAttribute('data-pg'));});
   show(1);

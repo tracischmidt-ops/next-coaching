@@ -89,19 +89,33 @@ function save(){T.ls(SAVE_KEY,JSON.stringify({screen:S.screen,a:S.a}));}
 function stepbar(show){document.getElementById('stepbar').style.display=show?'flex':'none';}
 
 /* ---------- validation ---------- */
-function screenDone(sc){
-  var a=S.a;
-  if(sc==='info') return a.firstName.trim()&&a.lastName.trim()&&/\S+@\S+\.\S+/.test(a.email);
-  if(sc==='season') return (a.transitions||[]).length&&a.bandwidth;
-  if(sc==='closing') return !!a.liftRing;
-  var ok=a[sc+'_sat']!==undefined&&a[sc+'_imp']!==undefined&&a[sc+'_dir'];
-  ITEMS[sc].forEach(function(_,i){ if(a[sc+'_q'+(i+1)]===undefined) ok=false; });
-  return ok;
+function missing(sc){
+  var a=S.a, m=[];
+  if(sc==='info'){ if(!a.firstName.trim()) m.push('firstName'); if(!a.lastName.trim()) m.push('lastName'); if(!/\S+@\S+\.\S+/.test(a.email)) m.push('email'); return m; }
+  if(sc==='season'){ if(!(a.transitions||[]).length) m.push('transitions'); if(!a.bandwidth) m.push('bandwidth'); return m; }
+  if(sc==='closing'){ if(!a.liftRing) m.push('liftRing'); return m; }
+  if(sc==='feedback'){ if(!S.fb.resonance) m.push('resonance'); if(!S.fb.ease) m.push('ease'); return m; }
+  if(!ITEMS[sc]) return m;
+  if(a[sc+'_sat']===undefined) m.push(sc+'_sat');
+  if(a[sc+'_imp']===undefined) m.push(sc+'_imp');
+  ITEMS[sc].forEach(function(_,i){ if(a[sc+'_q'+(i+1)]===undefined) m.push(sc+'_q'+(i+1)); });
+  if(!a[sc+'_dir']) m.push(sc+'_dir');
+  return m;
+}
+function screenDone(sc){ return missing(sc).length===0; }
+// Highlight unanswered questions and scroll to the first one
+function flagMissing(){
+  var m=missing(S.screen);
+  app().querySelectorAll('[data-req]').forEach(function(el){ el.classList.toggle('missing', m.indexOf(el.getAttribute('data-req'))>-1); });
+  var first=app().querySelector('.missing'); if(first) first.scrollIntoView({behavior:'smooth',block:'center'});
+  var h=app().querySelector('.need-hint'); if(h){ h.textContent=m.length===1?'One question still needs an answer. It\u2019s highlighted above.':m.length+' questions still need an answer. They\u2019re highlighted above.'; h.style.display='block'; }
 }
 function refresh(){
-  var b=app().querySelector('[data-go="next"]');
-  if(b) b.disabled=!screenDone(S.screen);
-  save();
+  var done=screenDone(S.screen), m=missing(S.screen);
+  app().querySelectorAll('[data-go="next"],[data-go="fbnext"]').forEach(function(b){ b.classList.toggle('waiting',!done); });
+  app().querySelectorAll('.missing').forEach(function(el){ if(m.indexOf(el.getAttribute('data-req'))<0) el.classList.remove('missing'); });
+  if(done){ var h=app().querySelector('.need-hint'); if(h) h.style.display='none'; }
+  if(S.screen!=='feedback') save();
 }
 
 /* ---------- screens ---------- */
@@ -115,7 +129,7 @@ function progress(){
   }).join('')+'</div>';
 }
 function nav(backLabel,nextLabel){
-  return '<div class="nav-row"><button class="btn-ghost" data-go="back">&larr; '+backLabel+'</button><button class="btn btn-primary" data-go="next" '+(screenDone(S.screen)?'':'disabled')+'>'+nextLabel+' &rarr;</button></div>';
+  return '<div class="nav-row"><button class="btn-ghost" data-go="back">&larr; '+backLabel+'</button><button class="btn btn-primary'+(screenDone(S.screen)?'':' waiting')+'" data-go="next">'+nextLabel+' &rarr;</button></div><div class="need-hint"></div>';
 }
 function textField(name,label,sub,ph){
   return '<div class="field"><label class="q" for="'+name+'">'+label+' <span class="opt">(optional)</span></label>'+(sub?'<div class="sub">'+sub+'</div>':'')+'<textarea id="'+name+'" data-text="'+name+'" placeholder="'+esc(ph||'')+'">'+esc(S.a[name]||'')+'</textarea></div>';
@@ -124,17 +138,17 @@ function textField(name,label,sub,ph){
 function renderInfo(){
   var a=S.a;
   app().innerHTML='<div class="wrap"><div class="eyebrow" style="text-align:center;">Five Rings Annual Reflection</div><h2 style="text-align:center;font-size:24px;margin-bottom:8px;">A little about you</h2><p class="lede" style="text-align:center;">The Reflection takes about 15&ndash;20 minutes. Your progress saves on this device, so you can pause and come back.</p><div style="display:flex;justify-content:center;gap:10px;margin:4px 0 20px;">'+R.map(function(r){return T.icon(r.key,40);}).join('')+'</div>'+
-  '<div class="card"><div class="field"><label class="q" for="fn">First name</label><input type="text" id="fn" data-text="firstName" value="'+esc(a.firstName)+'"></div>'+
-  '<div class="field"><label class="q" for="ln">Last name</label><input type="text" id="ln" data-text="lastName" value="'+esc(a.lastName)+'"></div>'+
-  '<div class="field"><label class="q" for="em">Email</label><input type="email" id="em" data-text="email" value="'+esc(a.email)+'"></div></div>'+
-  '<div class="nav-row"><a class="btn-ghost" href="index.html">&larr; Welcome page</a><button class="btn btn-primary" data-go="next" '+(screenDone('info')?'':'disabled')+'>Begin &rarr;</button></div></div>';
+  '<div class="card"><div class="field" data-req="firstName"><label class="q" for="fn">First name</label><input type="text" id="fn" data-text="firstName" value="'+esc(a.firstName)+'"></div>'+
+  '<div class="field" data-req="lastName"><label class="q" for="ln">Last name</label><input type="text" id="ln" data-text="lastName" value="'+esc(a.lastName)+'"></div>'+
+  '<div class="field" data-req="email"><label class="q" for="em">Email</label><input type="email" id="em" data-text="email" value="'+esc(a.email)+'"></div></div>'+
+  '<div class="nav-row"><a class="btn-ghost" href="index.html">&larr; Welcome page</a><button class="btn btn-primary'+(screenDone('info')?'':' waiting')+'" data-go="next">Begin &rarr;</button></div><div class="need-hint"></div></div>';
 }
 
 function renderSeason(){
   var a=S.a;
   app().innerHTML='<div class="wrap">'+progress()+'<div class="eyebrow">Before the Rings</div><h2 style="font-size:26px;margin-bottom:6px;">Your season of life</h2><p class="ring-sub">Context helps your results make sense. Nothing here is scored.</p>'+
-  '<div class="card"><div class="field"><div class="q">Which of these have you experienced in the past 12 months? <span class="opt">(select all that apply)</span></div>'+T.choices('transitions',a.transitions,TRANSITIONS,true,true)+'</div>'+
-  '<div class="field"><div class="q">How much bandwidth do you have right now?</div>'+T.choices('bandwidth',a.bandwidth,BANDWIDTH,false)+'</div>'+
+  '<div class="card"><div class="field" data-req="transitions"><div class="q">Which of these have you experienced in the past 12 months? <span class="opt">(select all that apply)</span></div>'+T.choices('transitions',a.transitions,TRANSITIONS,true,true)+'</div>'+
+  '<div class="field" data-req="bandwidth"><div class="q">How much bandwidth do you have right now?</div>'+T.choices('bandwidth',a.bandwidth,BANDWIDTH,false)+'</div>'+
   textField('energyText','What is taking up most of your energy right now?','','A sentence or two is plenty')+'</div>'+
   nav('Back','Continue to Health')+'</div>';
 }
@@ -143,16 +157,16 @@ function renderRing(key){
   var ring=R.filter(function(r){return r.key===key;})[0], a=S.a, ri=R.indexOf(ring);
   var items=ITEMS[key].map(function(it,i){
     var n=key+'_q'+(i+1);
-    return '<div class="item"><div class="q">'+(i+1)+'. '+esc(it.t)+'</div>'+T.pills(n,a[n],it.s,ring.color)+'</div>';
+    return '<div class="item" data-req="'+n+'"><div class="q">'+(i+1)+'. '+esc(it.t)+'</div>'+T.pills(n,a[n],it.s,ring.color)+'</div>';
   }).join('');
   var next=ri<R.length-1?'Continue to '+R[ri+1].name:'Continue';
   app().innerHTML='<div class="wrap">'+progress()+
   '<div class="ring-head" style="align-items:center;"><div style="display:flex;align-items:center;gap:12px;">'+T.icon(key,46)+'<h2 style="color:'+ring.color+'">'+ring.name+'</h2></div><span class="muted">Ring '+(ri+1)+' of 5</span></div>'+
   '<div class="def-card" style="background:'+ring.bg+';margin-top:14px;"><div><div class="lbl" style="color:'+ring.color+'">What we mean by '+ring.name+'</div><div class="def">'+ring.def+'</div><div class="ex">'+ring.ex+' Keep this in mind as you answer each question below.</div></div></div>'+
-  '<div class="card"><div class="field"><div class="q">Overall, how satisfied are you with your '+ring.name+' right now?</div>'+T.ten(key+'_sat',a[key+'_sat'],ring.color,'Not at all','Completely')+'</div>'+
-  '<div class="field"><div class="q">How much does '+ring.name+' matter to you in this season of life?</div>'+T.ten(key+'_imp',a[key+'_imp'],ring.color,'Not a priority','Top priority')+'</div></div>'+
+  '<div class="card"><div class="field" data-req="'+key+'_sat"><div class="q">Overall, how satisfied are you with your '+ring.name+' right now?</div>'+T.ten(key+'_sat',a[key+'_sat'],ring.color,'Not at all','Completely')+'</div>'+
+  '<div class="field" data-req="'+key+'_imp"><div class="q">How much does '+ring.name+' matter to you in this season of life?</div>'+T.ten(key+'_imp',a[key+'_imp'],ring.color,'Not a priority','Top priority')+'</div></div>'+
   '<div class="card"><div class="section-label">A closer look</div>'+items+'</div>'+
-  '<div class="card"><div class="field"><div class="q">Compared with a year ago, how is your '+ring.name+' going?</div><div class="sub" style="margin-top:0;">'+ring.name+' here means '+T.lc(ring.def)+'. '+ring.ex+'</div><div class="dir">'+
+  '<div class="card"><div class="field" data-req="'+key+'_dir"><div class="q">Compared with a year ago, how is your '+ring.name+' going?</div><div class="sub" style="margin-top:0;">'+ring.name+' here means '+T.lc(ring.def)+'. '+ring.ex+'</div><div class="dir">'+
     ['Better','About the same','Harder'].map(function(o){var on=a[key+'_dir']===o;return '<button type="button" class="choice'+(on?' on':'')+'" data-pick="'+key+'_dir" data-val="'+o+'" style="justify-content:center;">'+o+'</button>';}).join('')+
   '</div></div>'+textField(key+'_story','What’s the story behind your answers?','Anything we should know that the numbers might miss.','')+'</div>'+
   nav(ri===0?'Back':'Back to '+R[ri-1].name,next)+'</div>';
@@ -161,7 +175,7 @@ function renderRing(key){
 function renderClosing(){
   var a=S.a;
   app().innerHTML='<div class="wrap">'+progress()+'<div class="eyebrow">Bringing it together</div><h2 style="font-size:26px;margin-bottom:6px;">Looking across your Rings</h2><p class="ring-sub">Life doesn’t separate the Rings. These last questions look at the whole picture.</p>'+
-  '<div class="card"><div class="field"><div class="q">Which Ring, if it improved, would lift the others most?</div>'+T.choices('liftRing',a.liftRing,R.map(function(r){return r.name;}).concat(['Not sure yet']),false,true)+'</div>'+
+  '<div class="card"><div class="field" data-req="liftRing"><div class="q">Which Ring, if it improved, would lift the others most?</div>'+T.choices('liftRing',a.liftRing,R.map(function(r){return r.name;}).concat(['Not sure yet']),false,true)+'</div>'+
   textField('aliveText','When did you last feel most alive? What were you doing?','','')+
   textField('yearText','What would you like to be true a year from now?','','')+'</div>'+
   nav('Back to Curiosity','See my results')+'</div>';
@@ -239,16 +253,16 @@ function renderFeedback(){
   var fb=S.fb, ok=fb.ease&&fb.resonance;
   function fbText(n,l,ph){return '<div class="field"><label class="q" for="'+n+'">'+l+' <span class="opt">(optional)</span></label><textarea id="'+n+'" data-text="'+n+'" placeholder="'+ph+'">'+esc(fb[n]||'')+'</textarea></div>';}
   app().innerHTML='<div class="wrap"><div class="eyebrow">Step 2 of 3</div><h2 style="font-size:26px;margin-bottom:16px;">Help us improve</h2><div class="card">'+
-    '<div class="field"><div class="q">1. My results sound like me.</div>'+T.pills('resonance',fb.resonance,'A','#6E8B6B')+'</div>'+
+    '<div class="field" data-req="resonance"><div class="q">1. My results sound like me.</div>'+T.pills('resonance',fb.resonance,'A','#6E8B6B')+'</div>'+
     fbText('resonanceNote','2. What felt most accurate? What felt off?','For example, a Ring that scored higher or lower than you expected')+
-    '<div class="field"><div class="q">3. How easy was the Reflection to complete?</div>'+T.pills('ease',fb.ease,['Very difficult','Difficult','Okay','Easy','Very easy'],'#6E8B6B')+'</div>'+
+    '<div class="field" data-req="ease"><div class="q">3. How easy was the Reflection to complete?</div>'+T.pills('ease',fb.ease,['Very difficult','Difficult','Okay','Easy','Very easy'],'#6E8B6B')+'</div>'+
     '<div class="field"><div class="q">4. The length felt&hellip;</div>'+T.pills('length',fb.length,['Much too long','A bit long','About right','A bit short','Too short'],'#6E8B6B')+'</div>'+
     fbText('confusing','5. Were any questions confusing or hard to answer?','Which ones, and why?')+
     fbText('missing','6. Was anything missing that you expected to see?','Topics, questions, or features')+
     fbText('changes','7. Anything else you would change about the experience?','')+
-    '</div><div class="nav-row"><button class="btn-ghost" data-go="results">&larr; Back to results</button><button class="btn btn-primary" data-go="fbnext" '+(ok?'':'disabled')+'>Next: Explore a Treia Partnership &rarr;</button></div></div>';
+    '</div><div class="nav-row"><button class="btn-ghost" data-go="results">&larr; Back to results</button><button class="btn btn-primary'+(ok?'':' waiting')+'" data-go="fbnext">Next: Explore a Treia Partnership &rarr;</button></div><div class="need-hint"></div></div>';
 }
-function fbRefresh(){var b=app().querySelector('[data-go="fbnext"]'); if(b) b.disabled=!(S.fb.ease&&S.fb.resonance);}
+function fbRefresh(){refresh();}
 
 function renderTransition(){
   app().innerHTML='<div class="wrap"><div class="card" style="text-align:center;padding:40px 26px;"><div style="font-size:48px;">&#127793;</div><h2 style="font-size:26px;margin:8px 0 12px;">Thank you!</h2><p class="lede">Your Reflection and feedback are saved. One last step: the Treia Partnership Assessment.</p><p class="lede">Please answer it even if you think you’d rather reflect on your own. We’re testing whether these questions would help us introduce compatible peers, and we’ll ask about your own interest at the end.</p><a href="partner-matching-survey.html" class="btn btn-primary btn-full" style="margin-top:14px;">Step 3 of 3: Explore a Treia Partnership &rarr;</a></div></div>';
@@ -278,7 +292,7 @@ document.addEventListener('click',function(e){
   var b=e.target.closest('[data-go]'); if(!b) return;
   var g=b.getAttribute('data-go'), i=SCREENS.indexOf(S.screen);
   if(g==='next'){
-    if(!screenDone(S.screen)){return;}
+    if(!screenDone(S.screen)){flagMissing();return;}
     if(S.screen==='info'){T.ls('treia-firstName',S.a.firstName);T.ls('treia-lastName',S.a.lastName);T.ls('treia-email',S.a.email);}
     if(S.screen==='closing'){S.results=compute();submit(S.results);go('results');}
     else go(SCREENS[i+1]);
@@ -287,6 +301,7 @@ document.addEventListener('click',function(e){
   else if(g==='feedback'){go('feedback');}
   else if(g==='results'){go('results');}
   else if(g==='fbnext'){
+    if(!screenDone('feedback')){flagMissing();return;}
     var f=S.fb;
     T.post('Reflection Feedback',{'Date':new Date().toISOString(),'Tester ID':tid,'Name':S.a.firstName+' '+S.a.lastName,'Email':S.a.email,
       'Results Sound Like Me (1-5)':f.resonance,'What Felt Right / Off':f.resonanceNote||'','Ease (1-5)':f.ease,'Length (1=too long, 5=too short)':f.length||'',

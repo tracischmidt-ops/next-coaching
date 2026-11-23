@@ -114,3 +114,8 @@ input:focus-visible,textarea:focus-visible,select:focus-visible,button:focus-vis
 .ring-li{display:flex;gap:14px;align-items:flex-start;}
 .ring-li h3{font-size:17px;margin-bottom:2px;}
 .ring-li p{font-size:14px;color:var(--ink-soft);}
+
+/* gentle nudge when something is unanswered */
+.btn-primary.waiting{opacity:.45;}
+.missing{background:#FBEDE8;border-radius:12px;box-shadow:0 0 0 8px #FBEDE8,0 0 0 10px var(--terracotta);}
+.need-hint{display:none;text-align:right;font-size:13px;color:var(--terracotta);margin-top:10px;font-weight:600;}

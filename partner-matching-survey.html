@@ -91,16 +91,29 @@ function valid(sec){
 }
 function field(f){
   var opt=f.req?'':' <span class="opt">(optional)</span>', sub=f.sub?'<div class="sub">'+esc(f.sub)+'</div>':'', v=D[f.id];
-  var lab='<div class="q">'+esc(f.label)+opt+'</div>'+sub;
-  if(f.type==='text'||f.type==='email') return '<div class="field"><label class="q" for="'+f.id+'">'+esc(f.label)+opt+'</label>'+sub+'<input type="'+f.type+'" id="'+f.id+'" data-text="'+f.id+'" value="'+esc(v||'')+'"></div>';
-  if(f.type==='textarea') return '<div class="field"><label class="q" for="'+f.id+'">'+esc(f.label)+opt+'</label>'+sub+'<textarea id="'+f.id+'" data-text="'+f.id+'">'+esc(v||'')+'</textarea></div>';
-  if(f.type==='select') return '<div class="field"><label class="q" for="'+f.id+'">'+esc(f.label)+opt+'</label>'+sub+'<select id="'+f.id+'" data-sel="'+f.id+'"><option value="">Select one…</option>'+f.options.map(function(o){return '<option'+(v===o?' selected':'')+'>'+esc(o)+'</option>';}).join('')+'</select></div>';
-  if(f.type==='radio') return '<div class="field">'+lab+T.choices(f.id,v,f.options,false)+'</div>';
-  if(f.type==='multi') return '<div class="field">'+lab+T.choices(f.id,v,f.options,true,true)+'</div>';
-  if(f.type==='scale') return '<div class="field">'+lab+T.pills(f.id,v,f.labels,'#B5654A')+'</div>';
-  if(f.type==='ten') return '<div class="field">'+lab+T.ten(f.id,v,'#B5654A',f.lo,f.hi)+'</div>';
+  var lab='<div class="q">'+esc(f.label)+opt+'</div>'+sub, fd='<div class="field"'+(f.req?' data-req="'+f.id+'"':'')+'>';
+  if(f.type==='text'||f.type==='email') return fd+'<label class="q" for="'+f.id+'">'+esc(f.label)+opt+'</label>'+sub+'<input type="'+f.type+'" id="'+f.id+'" data-text="'+f.id+'" value="'+esc(v||'')+'"></div>';
+  if(f.type==='textarea') return fd+'<label class="q" for="'+f.id+'">'+esc(f.label)+opt+'</label>'+sub+'<textarea id="'+f.id+'" data-text="'+f.id+'">'+esc(v||'')+'</textarea></div>';
+  if(f.type==='select') return fd+'<label class="q" for="'+f.id+'">'+esc(f.label)+opt+'</label>'+sub+'<select id="'+f.id+'" data-sel="'+f.id+'"><option value="">Select one…</option>'+f.options.map(function(o){return '<option'+(v===o?' selected':'')+'>'+esc(o)+'</option>';}).join('')+'</select></div>';
+  if(f.type==='radio') return fd+lab+T.choices(f.id,v,f.options,false)+'</div>';
+  if(f.type==='multi') return fd+lab+T.choices(f.id,v,f.options,true,true)+'</div>';
+  if(f.type==='scale') return fd+lab+T.pills(f.id,v,f.labels,'#B5654A')+'</div>';
+  if(f.type==='ten') return fd+lab+T.ten(f.id,v,'#B5654A',f.lo,f.hi)+'</div>';
 }
-function refresh(){var b=app().querySelector('[data-go="next"]'); if(b) b.disabled=!valid(SECTIONS[idx]); save();}
+function missingIds(sec){ return sec.fields.filter(function(f){ return f.req && !valid({id:sec.id==='about'&&f.id==='email'?'about':'x',fields:[f]}); }).map(function(f){return f.id;}); }
+function refresh(){
+  var sec=SECTIONS[idx], m=missingIds(sec), b=app().querySelector('[data-go="next"]');
+  if(b) b.classList.toggle('waiting',!valid(sec));
+  app().querySelectorAll('.missing').forEach(function(el){ if(m.indexOf(el.getAttribute('data-req'))<0) el.classList.remove('missing'); });
+  if(valid(sec)){ var h=app().querySelector('.need-hint'); if(h) h.style.display='none'; }
+  save();
+}
+function flagMissing(){
+  var m=missingIds(SECTIONS[idx]);
+  app().querySelectorAll('[data-req]').forEach(function(el){ el.classList.toggle('missing', m.indexOf(el.getAttribute('data-req'))>-1); });
+  var first=app().querySelector('.missing'); if(first) first.scrollIntoView({behavior:'smooth',block:'center'});
+  var h=app().querySelector('.need-hint'); if(h){ h.textContent=m.length===1?'One question still needs an answer. It\u2019s highlighted above.':m.length+' questions still need an answer. They\u2019re highlighted above.'; h.style.display='block'; }
+}
 
 function render(){
   if(idx>=SECTIONS.length) return renderThanks();
@@ -110,7 +123,7 @@ function render(){
    '<h2 style="font-size:24px;margin-bottom:6px;">'+esc(sec.title)+'</h2><p class="ring-sub">'+esc(sec.sub)+'</p>'+
    (idx===0?'<div class="card" style="font-size:14px;color:var(--ink-soft);font-style:italic;margin-bottom:16px;">Please complete this even if you’d rather reflect on your own. We’re testing whether these questions would help us make thoughtful introductions. No introductions will be made from this test.</div>':'')+
    '<div class="card">'+sec.fields.map(field).join('')+'</div>'+
-   '<div class="nav-row">'+(idx===0?'<span></span>':'<button class="btn-ghost" data-go="back">&larr; Back</button>')+'<button class="btn btn-primary" data-go="next" '+(valid(sec)?'':'disabled')+'>'+(last?'Submit':'Continue &rarr;')+'</button></div></div>';
+   '<div class="nav-row">'+(idx===0?'<span></span>':'<button class="btn-ghost" data-go="back">&larr; Back</button>')+'<button class="btn btn-primary'+(valid(sec)?'':' waiting')+'" data-go="next">'+(last?'Submit':'Continue &rarr;')+'</button></div><div class="need-hint"></div></div>';
 }
 
 function col(id){return id.replace(/([A-Z])/g,' $1').replace(/^./,function(c){return c.toUpperCase();});}
@@ -143,7 +156,7 @@ document.addEventListener('change',function(e){var n=e.target.getAttribute&&e.ta
 document.addEventListener('click',function(e){
   var b=e.target.closest('[data-go]'); if(!b) return;
   if(b.getAttribute('data-go')==='back'){idx--;}
-  else { if(!valid(SECTIONS[idx])) return; if(idx===SECTIONS.length-1) submit(); idx++; }
+  else { if(!valid(SECTIONS[idx])){ flagMissing(); return; } if(idx===SECTIONS.length-1) submit(); idx++; }
   if(idx<SECTIONS.length) save();
   T.scrollTop(); render();
 });

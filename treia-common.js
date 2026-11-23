@@ -50,7 +50,12 @@ var TREIA = (function(){
   function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
   function ls(k,v){ try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k,v); }catch(e){ return null; } }
   function lsDel(k){ try{ localStorage.removeItem(k); }catch(e){} }
-  function scrollTop(){ window.scrollTo({top:0,behavior:'smooth'}); }
+  // Jump to the top of the new screen. Runs again after the screen is drawn, because phones
+// (especially iPhones) otherwise keep the old scroll position and land at the bottom.
+  function scrollTop(){
+    function up(){ window.scrollTo(0,0); document.documentElement.scrollTop=0; document.body.scrollTop=0; }
+    up(); if(window.requestAnimationFrame) requestAnimationFrame(up); setTimeout(up,60); setTimeout(up,250);
+  }
 
   function tid(){
     var t = ls('treia-tid');
